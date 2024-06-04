@@ -48,14 +48,12 @@ function App() {
           <div className="flex gap-10 justify-center">
             <button
               onClick={setLightMode}
-              className="px-2 rounded-sm dark:text-emerald-400 dark:hover:bg-emerald-600 duration-300"
-            >
+              className="px-2 rounded-sm dark:text-emerald-400 dark:hover:bg-emerald-600 duration-300">
               Light Mode
             </button>
             <button
               onClick={setDarkMode}
-              className="px-2 rounded-sm hover:bg-black hover:text-white dark:text-emerald-400 duration-300"
-            >
+              className="px-2 rounded-sm hover:bg-black hover:text-white dark:text-emerald-400 duration-300">
               Dark Mode
             </button>
           </div>
@@ -67,8 +65,7 @@ function App() {
           </h2>
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-3 items-center"
-          >
+            className="flex flex-col gap-3 items-center">
             <input
               className="text-black outline-none rounded-sm pl-2 m-auto w-full max-w-[350px] sm:p-1"
               type="text"
@@ -77,8 +74,7 @@ function App() {
             />
             <button
               type="submit"
-              className="border-[1px] p-1 w-[120px] mb-3 rounded-sm hover:opacity-80 dark:bg-emerald-400 duration-300"
-            >
+              className="border-[1px] p-1 w-[120px] mb-3 rounded-sm hover:opacity-80 dark:bg-emerald-400 duration-300">
               Convert
             </button>
           </form>
@@ -88,17 +84,15 @@ function App() {
                 !error
                   ? "hidden"
                   : "border-2 border-red-500 text-red-400 dark:border-red-600 dark:text-red-400 px-4 py-1 rounded-sm w-full max-w-[390px]"
-              }
-            >
-              You have problem with your eyes?
+              }>
+              This field can't be empty
             </span>
             {result ? (
               <a
                 target="_blank"
                 rel="noreferrer"
                 href={result}
-                className="underline"
-              >
+                className="underline">
                 Download {title}
               </a>
             ) : (

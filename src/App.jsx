@@ -124,6 +124,8 @@ function App() {
             <LoadingAnimation />
           ) : (
             <Button
+              ariaLabel="Convert"
+              children={null}
               type="submit"
               className="bg-[#4CAF50] text-white hover:bg-[#388E3C]">
               Convert

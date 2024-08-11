@@ -36,11 +36,13 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
         animate={{ x: isMenuOpen ? 64 : 0 }}
         transition={{ duration: 0.5 }}
         className="z-50 fixed top-2 left-2">
-        <button
+        <Button
+          children={null}
           onClick={handleMenuToggle}
+          ariaLabel="Burger Menu"
           className="px-3 py-1 rounded bg-[#4CAF50] text-white hover:bg-[#388E3C] dark:bg-[#333] dark:text-[#4CAF50] dark:hover:bg-[#555] transition-colors duration-300">
           <FiMenu size={24} />
-        </button>
+        </Button>
       </motion.div>
       <div
         className={`w-full h-full overflow-y-scroll overflow-x-hidden py-10 max-w-[1000px] mx-auto mt-4 p-4 ${
@@ -62,6 +64,8 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
                 </span>
                 <div>
                   <Button
+                    ariaLabel="Download"
+                    children={null}
                     onClick={() => handleDownload(key)}
                     className="px-1 py-1 bg-[#4CAF50] text-white hover:bg-[#388E3C] dark:bg-[#555] dark:text-[#4CAF50] dark:hover:bg-[#777]">
                     Download
@@ -73,6 +77,8 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
         )}
         <div className="mt-4">
           <Button
+            ariaLabel="Clear List"
+            children={null}
             onClick={handleClearList}
             className=" py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
             Clear List

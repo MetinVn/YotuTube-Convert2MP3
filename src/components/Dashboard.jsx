@@ -52,7 +52,9 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
           MP3 Dashboard
         </h1>
         {Object.keys(mp3List).length === 0 ? (
-          <p className="text-lg text-[#666] dark:text-[#ccc]">List is empty</p>
+          <p className="text-lg text-[#666] dark:text-[#ccc]">
+            The list is empty. Convert a URL to add it here automatically.
+          </p>
         ) : (
           <ul className="space-y-2 text-sm">
             {Object.keys(mp3List).map((key) => (

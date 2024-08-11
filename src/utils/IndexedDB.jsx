@@ -22,8 +22,8 @@ export const getAllMP3s = async () => {
 };
 
 export const clearMP3Store = async () => {
-  const db = await initDB();
-  return db.clear(STORE_NAME);
+  const db = await dbPromise;
+  return db.clear("mp3s");
 };
 
 export const saveTheme = async (theme) => {

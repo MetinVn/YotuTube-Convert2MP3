@@ -4,7 +4,6 @@ const Button = ({
   className = "",
   ariaLabel = "",
 }) => {
-  // Use a fallback for aria-label if none is provided and handle children being null
   const accessibleLabel =
     ariaLabel || (typeof children === "string" ? children : "Button");
 

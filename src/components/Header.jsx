@@ -1,27 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { setDarkMode, setLightMode } from "./Themes";
 import { getTheme, saveTheme } from "../utils/IndexedDB";
 
 const Header = () => {
-  const [systemTheme, setSystemTheme] = useState("light");
-
   useEffect(() => {
     const applySavedTheme = async () => {
       const savedTheme = await getTheme();
       if (savedTheme) {
         if (savedTheme === "dark") {
           setDarkMode();
-          setSystemTheme("dark");
         } else {
           setLightMode();
-          setSystemTheme("light");
         }
       } else {
         const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-        setSystemTheme(mediaQuery.matches ? "dark" : "light");
+        const currentSystemTheme = mediaQuery.matches ? "dark" : "light";
+        if (currentSystemTheme === "dark") {
+          setDarkMode();
+        } else {
+          setLightMode();
+        }
 
         const handleChange = (e) => {
-          setSystemTheme(e.matches ? "dark" : "light");
+          if (e.matches) {
+            setDarkMode();
+          } else {
+            setLightMode();
+          }
         };
 
         mediaQuery.addEventListener("change", handleChange);
@@ -56,16 +61,16 @@ const Header = () => {
   };
 
   return (
-    <div className="fixed top-2 w-full flex justify-center gap-4 mb-4">
+    <div className="fixed text-xs sm:text-sm md:text-lg top-2 w-full flex justify-center gap-4 mb-4">
       <button
         onClick={handleLightMode}
         className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
-        Light Mode
+        Light mode
       </button>
       <button
         onClick={handleDarkMode}
         className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
-        Dark Mode
+        Dark mode
       </button>
       <button
         onClick={handleSystemTheme}

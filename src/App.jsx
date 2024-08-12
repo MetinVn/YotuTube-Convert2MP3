@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import { youtube_parser } from "./utils/YoutubeParser";
+import { getAllMP3s, saveMP3 } from "./utils/IndexedDB";
+
 import Header from "./components/Header";
 import LoadingAnimation from "./components/LoadingAnimation";
 import Button from "./components/Button";
 import Input from "./components/Inputfield";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import Dashboard from "./components/Dashboard";
 import ResultLink from "./components/ResultLink";
-import { getAllMP3s, saveMP3 } from "./utils/IndexedDB";
 
 function App() {
   const inputUrl = useRef();
@@ -71,23 +73,33 @@ function App() {
 
         try {
           const response = await axios(options);
-          setTimeout(async () => {
+          const mp3Data = {
+            title: response.data.title,
+            url: response.data.link,
+          };
+
+          if (!mp3Data.url) {
+            toast.error(
+              "The conversion was successful, but no download link was provided. Please try again."
+            );
             setLoading(false);
-            const mp3Data = {
-              title: response.data.title,
-              url: response.data.link,
-            };
-            setResult(mp3Data.url);
-            setTitle(mp3Data.title);
-            setMp3List((prevList) => ({
-              ...prevList,
-              [mp3Data.url]: mp3Data,
-            }));
-            await saveMP3(mp3Data);
-            resolve();
-          }, 300);
+            reject(new Error("No download link provided"));
+            return;
+          }
+
+          setResult(mp3Data.url);
+          setTitle(mp3Data.title);
+          setMp3List((prevList) => ({
+            ...prevList,
+            [mp3Data.url]: mp3Data,
+          }));
+
+          await saveMP3(mp3Data);
+          setLoading(false);
+          resolve();
         } catch (error) {
           setLoading(false);
+          toast.error("Error occurred during conversion. Please try again.");
           reject(error);
           console.warn(error);
         }

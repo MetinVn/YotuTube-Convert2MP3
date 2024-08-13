@@ -13,7 +13,7 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
   const [volumes, setVolumes] = useState({});
   const [progresses, setProgresses] = useState({});
   const [durations, setDurations] = useState({});
-  const [tooltips, setTooltips] = useState({}); // Changed to handle individual tooltips
+  const [tooltips, setTooltips] = useState({});
   const audioRefs = useRef([]);
 
   const handlePlayPause = useCallback(

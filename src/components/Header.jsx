@@ -61,7 +61,7 @@ const Header = () => {
   };
 
   return (
-    <div className="fixed text-xs sm:text-sm md:text-lg top-2 w-full flex justify-center gap-4 mb-4">
+    <div className="fixed text-xs sm:text-sm md:text-lg top-5 md:top-2 w-full flex justify-end md:justify-center gap-4 mb-4">
       <button
         onClick={handleLightMode}
         className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">

@@ -12,6 +12,7 @@ import Button from "./components/Button";
 import Input from "./components/Inputfield";
 import Dashboard from "./components/Dashboard";
 import ResultLink from "./components/ResultLink";
+import Footer from "./components/Footer";
 
 function App() {
   const inputUrl = useRef();
@@ -115,51 +116,56 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center bg-white dark:bg-[#1E1E1E] transition-all duration-300">
-      <div className="max-w-[500px] w-full text-center">
-        <Header />
-        <h1 className="text-2xl sm:text-4xl font-bold text-[#333] dark:text-white mb-4 transition-colors duration-300">
-          YouTube to MP3 Converter
-        </h1>
-        <h2 className="text-sm sm:text-lg text-[#666] dark:text-[#ccc] mb-6 transition-colors duration-300">
-          Transform YouTube videos into MP3s in just a few clicks!
-        </h2>
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col items-center gap-3">
-          <Input
-            ref={inputUrl}
-            placeholder="Paste a Youtube video URL link..."
-            className="text-[#333] dark:text-white dark:bg-[#333] dark:border-[#444]"
+    <>
+      <div className="min-h-screen flex flex-col justify-between bg-white dark:bg-[#1E1E1E] transition-all duration-300">
+        <div className="flex flex-col justify-center items-center flex-grow">
+          <div className="max-w-[500px] w-full text-center">
+            <Header />
+            <h1 className="text-2xl sm:text-4xl font-bold text-[#333] dark:text-white mb-4 transition-colors duration-300">
+              YouTube to MP3 Converter
+            </h1>
+            <h2 className="text-sm sm:text-lg text-[#666] dark:text-[#ccc] mb-6 transition-colors duration-300">
+              Transform YouTube videos into MP3s in just a few clicks!
+            </h2>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col items-center gap-3">
+              <Input
+                ref={inputUrl}
+                placeholder="Paste a Youtube video URL link..."
+                className="text-[#333] dark:text-white dark:bg-[#333] dark:border-[#444]"
+              />
+              {loading ? (
+                <LoadingAnimation />
+              ) : (
+                <Button
+                  ariaLabel="Convert"
+                  children={null}
+                  type="submit"
+                  className="bg-[#4CAF50] text-white hover:bg-[#388E3C]">
+                  Convert
+                </Button>
+              )}
+            </form>
+            <div className="mt-4">
+              {result && <ResultLink href={result} title={title} />}
+            </div>
+          </div>
+          <ToastContainer
+            position="bottom-right"
+            draggable="touch"
+            draggableDirection="y"
           />
-          {loading ? (
-            <LoadingAnimation />
-          ) : (
-            <Button
-              ariaLabel="Convert"
-              children={null}
-              type="submit"
-              className="bg-[#4CAF50] text-white hover:bg-[#388E3C]">
-              Convert
-            </Button>
-          )}
-        </form>
-        <div className="mt-4">
-          {result && <ResultLink href={result} title={title} />}
+          <Dashboard
+            mp3List={mp3List}
+            setMp3List={setMp3List}
+            toast={toast}
+            toastContainer={ToastContainer}
+          />
         </div>
+        <Footer />
       </div>
-      <ToastContainer
-        position="bottom-right"
-        draggable="mouse"
-        draggableDirection="x"
-      />
-      <Dashboard
-        mp3List={mp3List}
-        setMp3List={setMp3List}
-        toast={toast}
-        toastContainer={ToastContainer}
-      />
-    </div>
+    </>
   );
 }
 

@@ -1,0 +1,1 @@
+VITE_RAPID_API_KEY = bb6ca9e02bmsh37ace359628eb67p1cfcfcjsn8051f8356a0f

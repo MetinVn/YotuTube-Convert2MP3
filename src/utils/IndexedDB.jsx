@@ -26,6 +26,11 @@ export const clearMP3Store = async () => {
   return db.clear("mp3s");
 };
 
+export const deleteMP3 = async (url) => {
+  const db = await dbPromise;
+  await db.delete("mp3s", url);
+};
+
 export const saveTheme = async (theme) => {
   const db = await dbPromise;
   await db.put("theme", { id: "user-theme", value: theme });

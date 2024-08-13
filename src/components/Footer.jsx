@@ -8,7 +8,7 @@ const Footer = () => {
         <p className="text-sm text-center">
           Made with ❤️ by{" "}
           <a
-            href="https://github.com/metinVn"
+            href="https://metinvn.github.io/ReactJS-TailwindCSS-Portfolio/"
             className="text-blue-400 hover:underline"
             target="_blank"
             rel="noopener noreferrer">

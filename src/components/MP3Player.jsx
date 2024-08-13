@@ -98,6 +98,32 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
     }));
   };
 
+  const handleProgressTouchMove = (e, index) => {
+    const touch = e.touches[0];
+    const progressBar = e.currentTarget;
+    const rect = progressBar.getBoundingClientRect();
+    const offsetX = touch.clientX - rect.left;
+    const percentage = (offsetX / rect.width) * 100;
+    const duration = audioRefs.current[index]?.duration || 0;
+    const currentTime = (percentage / 100) * duration;
+    setTooltips((prevTooltips) => ({
+      ...prevTooltips,
+      [index]: {
+        visible: true,
+        x: touch.clientX - rect.left + progressBar.offsetLeft,
+        y: touch.clientY - rect.top + progressBar.offsetTop - 40,
+        time: formatDuration(currentTime),
+      },
+    }));
+  };
+
+  const handleProgressTouchEnd = (index) => {
+    setTooltips((prevTooltips) => ({
+      ...prevTooltips,
+      [index]: { ...prevTooltips[index], visible: false },
+    }));
+  };
+
   useEffect(() => {
     const updateProgress = (index) => {
       if (
@@ -151,10 +177,10 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
       {ToastContainer}
       {Object.keys(mp3List).length === 0 ? (
         <p className="text-lg text-gray-600 dark:text-gray-300">
-          Convert any music to be able to listen it here.
+          Convert any music to be able to listen to it here.
         </p>
       ) : (
-        <ul className="space-y-2 text-sm">
+        <ul className="space-y-4 text-sm">
           {Object.keys(mp3List).map((key, index) => {
             const currentTrack = mp3List[key];
             const isCurrentTrackPlaying = playingIndex === index;
@@ -164,10 +190,10 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
             return (
               <li
                 key={key}
-                className="p-4 border border-gray-200 rounded-lg bg-[#f9f9f9] dark:bg-[#333] dark:border-[#444] transition-colors duration-300">
+                className="p-4 border border-gray-200 rounded-xl bg-white dark:bg-[#1f1f1f] dark:border-[#444] shadow-md transition-colors duration-300">
                 <div className="flex flex-col items-center space-y-3 w-full">
                   {/* Song Title */}
-                  <p className="font-bold text-sm text-green-500 text-center w-full">
+                  <p className="font-bold text-base text-green-500 text-center w-full">
                     {currentTrack.title}
                   </p>
 
@@ -177,10 +203,10 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                   </p>
 
                   {/* Play/Pause and Loop Buttons */}
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-6">
                     <button
                       onClick={() => handlePlayPause(index)}
-                      className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                      className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200">
                       {isCurrentTrackPlaying ? (
                         <FiPause color="green" size={20} />
                       ) : (
@@ -190,7 +216,7 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
 
                     <button
                       onClick={() => toggleLoop(index)}
-                      className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                      className="p-3 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition duration-200">
                       <FiRepeat
                         size={20}
                         className={
@@ -203,9 +229,9 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                   </div>
 
                   {/* Volume and Progress Bars in Column Layout */}
-                  <div className="flex flex-col items-center space-y-2 w-full">
+                  <div className="flex flex-col items-center space-y-3 w-full">
                     {/* Volume Control */}
-                    <div className="flex items-center space-x-2 w-full">
+                    <div className="flex items-center space-x-3 w-full">
                       <FiVolume2 color="green" size={20} />
                       <input
                         type="range"
@@ -214,15 +240,18 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                         step="0.01"
                         value={volumes[index] || 1}
                         onChange={(e) => handleVolumeChange(e, index)}
-                        className="w-full"
+                        className="w-full h-2 rounded-lg cursor-pointer accent-green-500"
                       />
-                      {volumes[index] === 0 ? <FiVolumeX size={20} /> : null}
+                      {volumes[index] === 0 ? (
+                        <FiVolumeX size={20} className="text-gray-500" />
+                      ) : null}
                     </div>
 
                     {/* Progress Bar */}
                     <div
                       className="relative w-[90%]"
-                      onMouseLeave={() => handleProgressMouseLeave(index)}>
+                      onMouseLeave={() => handleProgressMouseLeave(index)}
+                      onTouchEnd={() => handleProgressTouchEnd(index)}>
                       <input
                         type="range"
                         min="0"
@@ -231,11 +260,12 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                         value={progresses[index] || 0}
                         onChange={(e) => handleProgressChange(e, index)}
                         onMouseMove={(e) => handleProgressMouseMove(e, index)}
-                        className="w-full"
+                        onTouchMove={(e) => handleProgressTouchMove(e, index)}
+                        className="w-full h-2 rounded-lg cursor-pointer accent-green-500"
                       />
                       {tooltips[index]?.visible && (
                         <div
-                          className="absolute bg-black text-white text-xs rounded px-2 py-1"
+                          className="absolute bg-black text-white text-xs rounded-md px-2 py-1"
                           style={{
                             left: `${tooltips[index].x}px`,
                             top: `${tooltips[index].y}px`,

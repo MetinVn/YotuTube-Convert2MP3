@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from "react";
-import "react-toastify/dist/ReactToastify.css";
 import { FiMenu } from "react-icons/fi";
 import { debounce } from "lodash";
 
-import { clearMP3Store } from "../utils/IndexedDB";
+import { clearMP3Store, deleteMP3 } from "../utils/IndexedDB";
 import Button from "./Button";
 import ConvertedMusic from "./ConvertedMP3";
 import MP3Player from "./MP3Player";
+import Modal from "./Modal";
 
 const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [layout, setLayout] = useState("dashboard");
   const [filteredMP3s, setFilteredMP3s] = useState({});
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const dashRef = useRef();
   const menuRef = useRef();
 
@@ -58,9 +60,39 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
     }
   };
 
+  const handleDeleteItem = async (key) => {
+    const updatedList = { ...mp3List };
+    delete updatedList[key];
+    setMp3List(updatedList);
+    setFilteredMP3s(updatedList);
+    await deleteMP3(key);
+    toast.info("Item deleted.");
+  };
+
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const getEasterEggStatus = () => {
+    return localStorage.getItem("easterEggTriggered") === "true";
+  };
+
+  const setEasterEggStatus = () => {
+    localStorage.setItem("easterEggTriggered", "true");
+  };
+
+  const handleEasterEggCheck = () => {
+    const hasTriggered = getEasterEggStatus();
+
+    if (!hasTriggered && Object.keys(filteredMP3s).length >= 3) {
+      setShowModal(true);
+      setEasterEggStatus();
+    }
+  };
+
+  useEffect(() => {
+    handleEasterEggCheck();
+  }, [filteredMP3s]);
 
   return (
     <div
@@ -96,6 +128,7 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
             searchTerm={searchTerm}
             onSearchTermChange={setSearchTerm}
             handleClearList={handleClearList}
+            handleDeleteItem={handleDeleteItem}
             ToastContainer={ToastContainer}
           />
         ) : (
@@ -108,6 +141,47 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
           )
         )}
       </div>
+      {showModal && (
+        <Modal isOpen={showEasterEgg} onClose={() => setShowEasterEgg(false)}>
+          <div>
+            <p>Check out these awesome projects:</p>
+            <ul className="list-disc pl-5">
+              <li>
+                <a
+                  target="_blank"
+                  href="https://metinvn.github.io/Open-Library-Search-API/"
+                  className="text-blue-500 hover:underline">
+                  Book & Author Search
+                </a>
+              </li>
+              <li>
+                <a
+                  target="_blank"
+                  href="https://metinvn.github.io/Movie-App/"
+                  className="text-blue-500 hover:underline">
+                  Movie Database
+                </a>
+              </li>
+              <li>
+                <a
+                  target="_blank"
+                  href="https://metinvn.github.io/Recipe-App/recipe.html"
+                  className="text-blue-500 hover:underline">
+                  Recipe Finder
+                </a>
+              </li>
+              <li>
+                <a
+                  target="_blank"
+                  href="https://metinvn.github.io/Translator/"
+                  className="text-blue-500 hover:underline">
+                  Translator
+                </a>
+              </li>
+            </ul>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

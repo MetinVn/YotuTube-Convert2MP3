@@ -8,6 +8,7 @@ const ConvertedMusic = ({
   searchTerm,
   onSearchTermChange,
   handleClearList,
+  handleDeleteItem,
   ToastContainer,
 }) => {
   return (
@@ -36,6 +37,12 @@ const ConvertedMusic = ({
               className="p-2 border rounded bg-[#f9f9f9] dark:bg-[#333] dark:border-[#444]">
               <div>
                 <ResultLink href={key} title={filteredMP3s[key].title} />
+                <Button
+                  ariaLabel="Delete Item"
+                  onClick={() => handleDeleteItem(key)}
+                  className="mt-2 py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
+                  Delete
+                </Button>
               </div>
             </li>
           ))}
@@ -46,7 +53,7 @@ const ConvertedMusic = ({
           ariaLabel="Clear List"
           onClick={handleClearList}
           className="py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
-          Clear List
+          Delete All
         </Button>
       </div>
       <div>{ToastContainer}</div>

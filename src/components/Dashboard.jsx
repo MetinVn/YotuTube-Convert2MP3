@@ -6,15 +6,12 @@ import { clearMP3Store, deleteMP3 } from "../utils/IndexedDB";
 import Button from "./Button";
 import ConvertedMusic from "./ConvertedMP3";
 import MP3Player from "./MP3Player";
-import Modal from "./Modal";
 
 const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [layout, setLayout] = useState("dashboard");
   const [filteredMP3s, setFilteredMP3s] = useState({});
-  const [showEasterEgg, setShowEasterEgg] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const dashRef = useRef();
   const menuRef = useRef();
 
@@ -73,27 +70,6 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const getEasterEggStatus = () => {
-    return localStorage.getItem("easterEggTriggered") === "true";
-  };
-
-  const setEasterEggStatus = () => {
-    localStorage.setItem("easterEggTriggered", "true");
-  };
-
-  const handleEasterEggCheck = () => {
-    const hasTriggered = getEasterEggStatus();
-
-    if (!hasTriggered && Object.keys(filteredMP3s).length >= 3) {
-      setShowModal(true);
-      setEasterEggStatus();
-    }
-  };
-
-  useEffect(() => {
-    handleEasterEggCheck();
-  }, [filteredMP3s]);
-
   return (
     <div
       ref={menuRef}
@@ -118,7 +94,6 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
           className="mt-4 mb-6 p-2 rounded outline-none bg-[#f9f9f9] text-[#333] dark:bg-[#333] dark:text-white transition-colors duration-300">
           <option value="dashboard">Converted music</option>
           <option value="mp3player">MP3 Player</option>{" "}
-          {/* Add MP3 Player option */}
         </select>
 
         {layout === "dashboard" ? (
@@ -141,47 +116,6 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
           )
         )}
       </div>
-      {showModal && (
-        <Modal isOpen={showEasterEgg} onClose={() => setShowEasterEgg(false)}>
-          <div>
-            <p>Check out these awesome projects:</p>
-            <ul className="list-disc pl-5">
-              <li>
-                <a
-                  target="_blank"
-                  href="https://metinvn.github.io/Open-Library-Search-API/"
-                  className="text-blue-500 hover:underline">
-                  Book & Author Search
-                </a>
-              </li>
-              <li>
-                <a
-                  target="_blank"
-                  href="https://metinvn.github.io/Movie-App/"
-                  className="text-blue-500 hover:underline">
-                  Movie Database
-                </a>
-              </li>
-              <li>
-                <a
-                  target="_blank"
-                  href="https://metinvn.github.io/Recipe-App/recipe.html"
-                  className="text-blue-500 hover:underline">
-                  Recipe Finder
-                </a>
-              </li>
-              <li>
-                <a
-                  target="_blank"
-                  href="https://metinvn.github.io/Translator/"
-                  className="text-blue-500 hover:underline">
-                  Translator
-                </a>
-              </li>
-            </ul>
-          </div>
-        </Modal>
-      )}
     </div>
   );
 };

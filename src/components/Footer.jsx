@@ -15,7 +15,7 @@ const Footer = () => {
           </div>
 
           {/* Supporting My Development Section */}
-          <div className="flex-1 text-center p-4">
+          <div className="flex-1 p-4">
             <h4 className="text-lg text-left font-semibold mb-3">
               Supporting My Development
             </h4>

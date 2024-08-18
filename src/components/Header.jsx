@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { setDarkMode, setLightMode } from "./Themes";
+
+import { setDarkMode, setLightMode } from "../functions/Themes";
+
 import { getTheme, saveTheme } from "../utils/IndexedDB";
 
 const Header = () => {
@@ -61,20 +63,20 @@ const Header = () => {
   };
 
   return (
-    <div className="fixed text-xs sm:text-sm md:text-lg top-5 md:top-2 w-full flex justify-end md:justify-center gap-4 mb-4">
+    <div className="fixed text-xs sm:text-sm md:text-lg top-5 right-0 md:top-2 flex justify-end md:justify-center gap-0 md:gap-4 mb-4">
       <button
         onClick={handleLightMode}
-        className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
+        className="px-2 md:px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
         Light mode
       </button>
       <button
         onClick={handleDarkMode}
-        className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
+        className="px-2 md:px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
         Dark mode
       </button>
       <button
         onClick={handleSystemTheme}
-        className="px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
+        className="px-2 md:px-3 py-1 rounded dark:text-[#4CAF50] hover:bg-[#999] dark:hover:bg-[#333] transition-colors duration-300">
         Prefer system theme
       </button>
     </div>

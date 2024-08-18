@@ -3,11 +3,11 @@ import {
   FiPlay,
   FiPause,
   FiVolume2,
-  FiVolumeX,
   FiRepeat,
+  FiDownload,
 } from "react-icons/fi";
 
-const MP3Player = ({ mp3List, toast, ToastContainer }) => {
+const MP3Player = ({ mp3List, toast, toastContainer }) => {
   const [playingIndex, setPlayingIndex] = useState(null);
   const [loopingStates, setLoopingStates] = useState({});
   const [volumes, setVolumes] = useState({});
@@ -174,7 +174,10 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
 
   return (
     <div>
-      {ToastContainer}
+      <h1 className="text-2xl font-bold text-[#333] dark:text-white mb-4">
+        Music Player
+      </h1>
+      {toastContainer}
       {Object.keys(mp3List).length === 0 ? (
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Convert any music to be able to listen to it here.
@@ -242,9 +245,6 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                         onChange={(e) => handleVolumeChange(e, index)}
                         className="w-full h-2 rounded-lg cursor-pointer accent-green-500"
                       />
-                      {volumes[index] === 0 ? (
-                        <FiVolumeX size={20} className="text-gray-500" />
-                      ) : null}
                     </div>
 
                     {/* Progress Bar */}
@@ -275,6 +275,13 @@ const MP3Player = ({ mp3List, toast, ToastContainer }) => {
                         </div>
                       )}
                     </div>
+                    <a
+                      href={currentTrack.url}
+                      download={currentTrack.title + ".mp3"}
+                      className="flex items-center space-x-2 py-2 px-6 bg-green-600 text-white rounded-lg hover:bg-green-700 active:bg-green-800 transition duration-300">
+                      <FiDownload size={16} />
+                      <span>Download</span>
+                    </a>
                   </div>
 
                   {/* Hidden Audio Element */}

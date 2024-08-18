@@ -1,7 +1,8 @@
-import Input from "./Inputfield";
-import Button from "./Button";
-import ResultLink from "./ResultLink";
+import Input from "../components/Inputfield";
+import Button from "../components/Button";
+import ResultLink from "../components/ResultLink";
 
+import { formatFileSize } from "../utils/FormatFileSize";
 const ConvertedMusic = ({
   dashRef,
   filteredMP3s,
@@ -9,7 +10,6 @@ const ConvertedMusic = ({
   onSearchTermChange,
   handleClearList,
   handleDeleteItem,
-  ToastContainer,
 }) => {
   return (
     <>
@@ -35,28 +35,32 @@ const ConvertedMusic = ({
             <li
               key={key}
               className="p-2 border rounded bg-[#f9f9f9] dark:bg-[#333] dark:border-[#444]">
-              <div>
-                <ResultLink href={key} title={filteredMP3s[key].title} />
+              <ResultLink href={key} title={filteredMP3s[key].title} />
+              <div className="flex justify-between items-center">
                 <Button
                   ariaLabel="Delete Item"
                   onClick={() => handleDeleteItem(key)}
                   className="mt-2 py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
                   Delete
                 </Button>
+                <p className="text-gray-400">
+                  {formatFileSize(filteredMP3s[key].fileSize)}
+                </p>
               </div>
             </li>
           ))}
         </ul>
       )}
-      <div className="mt-4">
-        <Button
-          ariaLabel="Clear List"
-          onClick={handleClearList}
-          className="py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
-          Delete All
-        </Button>
-      </div>
-      <div>{ToastContainer}</div>
+      {Object.keys(filteredMP3s).length > 2 && (
+        <div className="mt-4">
+          <Button
+            ariaLabel="Clear List"
+            onClick={handleClearList}
+            className="py-[4px] bg-[#FF5252] text-white hover:bg-[#E63946] dark:bg-[#555] dark:text-[#FF5252] dark:hover:bg-[#777]">
+            Delete All
+          </Button>
+        </div>
+      )}
     </>
   );
 };

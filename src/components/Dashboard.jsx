@@ -2,15 +2,26 @@ import { useEffect, useRef, useState } from "react";
 import { FiMenu } from "react-icons/fi";
 import { debounce } from "lodash";
 
-import { clearMP3Store, deleteMP3 } from "../utils/IndexedDB";
 import Button from "./Button";
-import ConvertedMusic from "./ConvertedMP3";
-import MP3Player from "./MP3Player";
+import Select from "./SelectElement";
 
-const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
+import ConvertedMusic from "../layouts/ConvertedMP3";
+import MP3Player from "../layouts/MP3Player";
+import ConvertedMP4 from "../layouts/ConvertedMP4";
+
+import { clearMP3Store, deleteMP3, deleteMP4 } from "../utils/IndexedDB";
+
+const Dashboard = ({
+  mp4List,
+  mp3List,
+  setMp3List,
+  setMP4List,
+  toast,
+  ToastContainer,
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [layout, setLayout] = useState("dashboard");
+  const [layout, setLayout] = useState("mp3");
   const [filteredMP3s, setFilteredMP3s] = useState({});
   const dashRef = useRef();
   const menuRef = useRef();
@@ -63,7 +74,22 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
     setMp3List(updatedList);
     setFilteredMP3s(updatedList);
     await deleteMP3(key);
-    toast.info("Item deleted.");
+    toast.info("Item deleted from mp3 list.");
+  };
+
+  const handleDelete = async (title) => {
+    try {
+      await deleteMP4(title);
+      setMP4List((prevList) => {
+        const newList = { ...prevList };
+        delete newList[title];
+        return newList;
+      });
+      toast.info("Item deleted from mp4 list.");
+    } catch (error) {
+      toast.error("Failed to delete item from mp4 list.");
+      console.error("Error deleting MP4:", error);
+    }
   };
 
   const handleMenuToggle = () => {
@@ -88,15 +114,17 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
         className={`w-full h-full overflow-y-scroll overflow-x-hidden py-10 max-w-[1000px] mx-auto mt-4 p-4 ${
           isMenuOpen ? "opacity-100" : "opacity-0"
         } transition-opacity duration-300`}>
-        <select
-          onChange={(e) => setLayout(e.target.value)}
+        <Select
           value={layout}
-          className="mt-4 mb-6 p-2 rounded outline-none bg-[#f9f9f9] text-[#333] dark:bg-[#333] dark:text-white transition-colors duration-300">
-          <option value="dashboard">Converted music</option>
-          <option value="mp3player">MP3 Player</option>{" "}
-        </select>
-
-        {layout === "dashboard" ? (
+          onChange={(e) => setLayout(e.target.value)}
+          className={"mb-5"}
+          options={[
+            { value: "mp3", label: "Converted music" },
+            { value: "mp4", label: "Converted videos" },
+            { value: "mp3player", label: "MP3 Player" },
+          ]}
+        />
+        {layout === "mp3" && (
           <ConvertedMusic
             dashRef={dashRef}
             filteredMP3s={filteredMP3s}
@@ -104,16 +132,21 @@ const Dashboard = ({ mp3List, setMp3List, toast, ToastContainer }) => {
             onSearchTermChange={setSearchTerm}
             handleClearList={handleClearList}
             handleDeleteItem={handleDeleteItem}
+          />
+        )}
+        {layout === "mp3player" && (
+          <MP3Player
+            mp3List={filteredMP3s}
+            toast={toast}
             ToastContainer={ToastContainer}
           />
-        ) : (
-          layout === "mp3player" && (
-            <MP3Player
-              mp3List={filteredMP3s}
-              toast={toast}
-              ToastContainer={ToastContainer}
-            />
-          )
+        )}
+        {layout === "mp4" && (
+          <ConvertedMP4
+            handleDeleteItem={handleDelete}
+            setMP4List={setMP4List}
+            mp4List={mp4List}
+          />
         )}
       </div>
     </div>

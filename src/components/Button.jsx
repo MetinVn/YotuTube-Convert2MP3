@@ -1,15 +1,6 @@
-const Button = ({
-  onClick = () => {},
-  children = null,
-  className = "",
-  ariaLabel = "",
-}) => {
-  const accessibleLabel =
-    ariaLabel || (typeof children === "string" ? children : "Button");
-
+const Button = ({ onClick = () => {}, children = null, className = "" }) => {
   return (
     <button
-      aria-label={accessibleLabel}
       onClick={onClick}
       className={`px-4 py-2 rounded transition-colors duration-300 ${className}`}>
       {children}

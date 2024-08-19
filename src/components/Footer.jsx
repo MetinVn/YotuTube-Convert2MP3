@@ -1,3 +1,4 @@
+import black_image from "../images/black-button.png";
 const Footer = () => {
   return (
     <footer className="bg-[#1E1E1E] text-white py-2 px-4 border-t-2 border-[#333]">
@@ -27,10 +28,14 @@ const Footer = () => {
             </p>
             <a
               href="https://www.buymeacoffee.com/MetinVn"
-              className="inline-block bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-semibold hover:bg-yellow-400 transition"
               target="_blank"
+              className="flex w-fit mx-auto"
               rel="noopener noreferrer">
-              Buy Me a Coffee
+              <img
+                src={black_image}
+                alt="Buy Me a Coffee"
+                style={{ height: "50px", width: "200px" }}
+              />
             </a>
           </div>
         </div>

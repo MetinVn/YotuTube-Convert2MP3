@@ -8,9 +8,9 @@ const Footer = () => {
           <div className="flex-1 p-4">
             <h4 className="text-lg text-left font-semibold mb-3">About</h4>
             <p className="text-sm">
-              MP3 Converter is a web app that lets you convert YouTube videos to
-              MP3 and MP4 formats easily. Listen to your MP3 files with an
-              embedded player before downloading.
+              YouTube Converter is a web app that lets you convert YouTube
+              videos to MP3 and MP4 formats easily. Listen to your MP3 files
+              with an embedded player before downloading.
             </p>
           </div>
 

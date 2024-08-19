@@ -55,7 +55,7 @@ const Footer = () => {
             </li>
             <li>
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/MetinVn"
                 className="text-blue-400 hover:underline"
                 target="_blank"
                 rel="noopener noreferrer">

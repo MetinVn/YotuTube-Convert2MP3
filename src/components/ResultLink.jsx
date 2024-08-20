@@ -32,7 +32,7 @@ const ResultLink = ({ href, title, button = true }) => {
         href={href}
         download
         className="underline sm:no-underline text-[#4CAF50] hover:text-[#388E3C] hover:underline transition duration-300 ease-in-out"
-        target="_blank"
+        target="_self"
         rel="noopener noreferrer">
         {title}
       </a>

@@ -1,111 +1,108 @@
-import { useEffect, useRef, useState } from "react";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useContext, useRef, useState } from "react";
+import { toast, ToastContainer, Slide } from "react-toastify";
 
-import { fetchStoredMP3s } from "./utils/FetchStoredMP3";
-import { fetchMP3Data } from "./utils/HandleSubmitMP3";
-import { fetchMP4Data } from "./utils/HandleSubmitMP4";
-import { fetchStoredMP4s } from "./utils/FetchStoredMP4";
+import { fetchMP3Data } from "./utils/ConvertToMP3";
 
-import Header from "./components/Header";
 import LoadingAnimation from "./components/LoadingAnimation";
 import Button from "./components/Button";
 import Input from "./components/Inputfield";
-import Dashboard from "./components/Dashboard";
 import Footer from "./components/Footer";
-import Select from "./components/SelectElement";
+import CustomSelect from "./components/ReactSelect";
+import { MP3Context } from "./contexts/MP3Context";
+import ResultLink from "./components/ResultLink";
 
 function App() {
-  const inputUrl = useRef();
+  const inputUrl = useRef(null);
   const [loading, setLoading] = useState(false);
   const [convertType, setConvertType] = useState("mp3");
-
-  //Mp3 variables
-  const [list, setMp3List] = useState({});
-  //Mp4 variables
-  const [mp4List, setMP4List] = useState({});
-
-  const options = [
-    { value: "mp3", label: "MP3" },
-    { value: "mp4", label: "MP4" },
-  ];
+  const { setMP3List } = useContext(MP3Context);
+  const options = [{ value: "mp3", label: "MP3" }];
+  const [lastConvertedMP3, setLastConvertedMP3] = useState(null);
 
   const handleSelectChange = (e) => {
-    setConvertType(e.target.value);
+    setConvertType(e);
   };
 
-  useEffect(() => {
-    fetchStoredMP3s(setMp3List, toast);
-    fetchStoredMP4s(setMP4List, toast);
-  }, []);
+  const handleConversion = async (e) => {
+    setLoading(true);
+    try {
+      const displayItem = await fetchMP3Data(e, inputUrl, setMP3List, toast);
+      if (displayItem) {
+        setLastConvertedMP3(displayItem);
+      }
+    } catch (error) {
+      console.error("Error during conversion:", error);
+      toast.error("An error occurred during conversion.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-white dark:bg-[#1E1E1E] transition-all duration-300">
-      <div className="flex flex-col justify-center items-center flex-grow my-20 md:my-0">
-        <div className="max-w-[500px] w-full text-center">
-          <Header />
-          <h1 className="text-2xl sm:text-4xl font-bold text-[#333] dark:text-white mb-4 transition-colors duration-300">
-            YouTube to MP3 Converter
-          </h1>
-          <h2 className="text-sm sm:text-lg text-[#666] dark:text-[#ccc] mb-6 transition-colors duration-300">
-            Transform YouTube videos into MP3s in just a few clicks!
-          </h2>
-          <div>
-            {loading ? (
-              <LoadingAnimation />
-            ) : (
-              <div className="w-full flex flex-col md:flex-row items-center justify-center gap-2">
-                <Input
-                  ref={inputUrl}
-                  placeholder="Paste a Youtube video URL link..."
-                  className="text-[#333] dark:text-white dark:bg-[#333] dark:border-[#444]"
-                />
-                {convertType === "mp3" && (
+    <>
+      <ToastContainer position="bottom-right" transition={Slide} stacked limit={8} />
+      <div className="min-h-screen flex flex-col justify-between bg-[#1E1E1E] transition-all duration-300">
+        <div className="flex flex-col justify-center items-center flex-grow my-20 md:mt-40">
+          <h1 className="text-2xl text-center sm:text-4xl font-semibold text-white mb-4">YouTube Converter</h1>
+          <div className="max-w-[500px] w-full text-center">
+            <div>
+              {loading ? (
+                <LoadingAnimation />
+              ) : (
+                <div className="flex flex-col mx-1 items-center justify-center gap-2">
+                  <div className="w-full flex items-center gap-1 sm:gap-2">
+                    <Input
+                      type="search"
+                      ref={inputUrl}
+                      placeholder="Paste a YouTube video URL link..."
+                      className="sm:mx-0 text-white bg-[#333] border-[#444] "
+                    />
+                    <CustomSelect
+                      width={"100px"}
+                      value={convertType}
+                      onChange={handleSelectChange}
+                      options={options}
+                      className="w-10"
+                    />
+                  </div>
+                  {convertType === "mp3" && (
+                    <Button
+                      className="px-4 py-2 w-full text-white bg-[#4CAF50] hover:bg-[#388E3C]"
+                      onClick={handleConversion}
+                      children="Convert"
+                      type="button"
+                      aria_label="Convert to mp3"
+                    />
+                  )}
+                  {/* {convertType === "mp4" && (
                   <Button
-                    onClick={(e) =>
-                      fetchMP3Data(e, setLoading, setMp3List, inputUrl, toast)
-                    }
-                    ariaLabel="Convert"
-                    className="bg-[#4CAF50] text-white hover:bg-[#388E3C]">
-                    Convert
-                  </Button>
-                )}
-                {convertType === "mp4" && (
-                  <Button
+                    type="button"
                     onClick={(e) =>
                       fetchMP4Data(e, setLoading, setMP4List, inputUrl, toast)
                     }
-                    ariaLabel="Convert"
-                    className="bg-[#4CAF50] text-white hover:bg-[#388E3C]">
-                    Convert
-                  </Button>
-                )}
-                <Select
-                  value={convertType}
-                  onChange={handleSelectChange}
-                  options={options}
-                  className="w-40"
-                />
-              </div>
-            )}
+                    aria_label="Convert to mp4"
+                    children="Convert"
+                  />
+                )} */}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="mt-3">
+            {/* <a
+              href={lastConvertedMP3?.url}
+              download
+              target="_self"
+              rel="noopener noreferrer"
+              key={lastConvertedMP3?.youtubeID}>
+              <span>{lastConvertedMP3?.title}</span>
+            </a> */}
+            <ResultLink href={lastConvertedMP3?.url} title={lastConvertedMP3?.title} target={"_self"} button={false} />
           </div>
         </div>
-        <ToastContainer
-          position="bottom-right"
-          draggable="touch"
-          draggableDirection="y"
-        />
-        <Dashboard
-          mp4List={mp4List}
-          mp3List={list}
-          setMp3List={setMp3List}
-          setMP4List={setMP4List}
-          toast={toast}
-          toastContainer={ToastContainer}
-        />
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </>
   );
 }
 

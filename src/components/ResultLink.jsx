@@ -1,15 +1,14 @@
-import React from "react";
-
+import { Link } from "react-router-dom";
 import Button from "./Button";
 
-const ResultLink = ({ href, title, button = true }) => {
+const ResultLink = ({ href, url, title, button = true, target = "_blank", className = "" }) => {
   const handleShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
           title: title,
           text: `Check out this MP3: ${title}`,
-          url: href,
+          url: url,
         });
       } catch (error) {
         console.error("Error sharing the link:", error);
@@ -24,25 +23,23 @@ const ResultLink = ({ href, title, button = true }) => {
   }
 
   return (
-    <div
-      className={`flex ${
-        button ? "justify-between" : "justify-center text-center"
-      } items-center`}>
-      <a
-        href={href}
+    <div className={`flex ${button ? "justify-between gap-1" : "justify-center text-center"} items-center`}>
+      <Link
+        to={href}
         download
-        className="underline sm:no-underline text-[#4CAF50] hover:text-[#388E3C] hover:underline transition duration-300 ease-in-out"
-        target="_self"
+        className={`underline text-justify sm:no-underline text-white hover:underline transition duration-300 ${className}`}
+        target={target}
         rel="noopener noreferrer">
         {title}
-      </a>
+      </Link>
       {button ? (
         <Button
-          ariaLabel="Share"
+          children="Share"
+          type="button"
+          aria_label="Share"
           onClick={handleShare}
-          className="bg-[#4CAF50] text-white px-4 py-2 rounded hover:bg-[#388E3C]">
-          Share
-        </Button>
+          className="border border-[#696969] text-green-500 px-4 py-1 rounded hover:bg-[#696969]"
+        />
       ) : null}
     </div>
   );

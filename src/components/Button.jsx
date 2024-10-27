@@ -1,8 +1,21 @@
-const Button = ({ onClick = () => {}, children = null, className = "" }) => {
+import React from "react";
+
+const Button = ({
+  onClick = () => {},
+  type = "button",
+  children = null,
+  aria_label = null,
+  disabled = false,
+  className = "",
+}) => {
   return (
     <button
+      disabled={disabled}
+      title={aria_label || ""}
+      aria-label={aria_label || ""}
+      type={type}
       onClick={onClick}
-      className={`px-4 py-2 rounded transition-colors duration-300 ${className}`}>
+      className={`rounded-md transition-all duration-300 ${className}`}>
       {children}
     </button>
   );

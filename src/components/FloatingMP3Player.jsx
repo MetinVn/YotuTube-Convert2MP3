@@ -15,7 +15,7 @@ const FloatingMP3Displayer = ({
   return (
     <div
       className="
-    fixed top-1/2 right-2 border border-[#4CAF50] transform -translate-y-1/2 bg-[#333] text-white p-2 rounded-lg shadow-lg 
+    fixed z-50 top-1/2 right-2 border border-[#4CAF50] transform -translate-y-1/2 bg-[#333] text-white p-2 rounded-lg shadow-lg 
     w-40 flex flex-col items-center 
     sm:w-48 sm:p-3
     md:w-60 md:p-4

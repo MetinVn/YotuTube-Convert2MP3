@@ -38,11 +38,6 @@ const Dashboard = () => {
       description: "Listen to your converted music",
       linkTo: "/YotuTube-Convert2MP3/music-list",
     },
-    {
-      name: "Check out MP4 list",
-      description: "Download your converted videos",
-      linkTo: "/YotuTube-Convert2MP3/video-list",
-    },
   ];
 
   const dashboardBugReport = [

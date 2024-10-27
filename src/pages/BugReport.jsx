@@ -19,10 +19,8 @@ const BugReport = () => {
     e.preventDefault();
     const { name, email, message } = formData;
 
-    // Create a mailto link with pre-filled data
     const mailtoLink = `mailto:aresxant@gmail.com?subject=Bug Report from ${name}&body=Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
 
-    // Open the user's email client
     window.location.href = mailtoLink;
   };
 

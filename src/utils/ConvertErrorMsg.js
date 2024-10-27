@@ -1,5 +1,3 @@
-// src/utils/errorMessages.js
-
 export const getErrorMessage = (code) => {
   switch (code) {
     case "auth/invalid-ceredential":
@@ -10,7 +8,6 @@ export const getErrorMessage = (code) => {
       return "The password is too weak. It should be at least 6 characters.";
     case "auth/invalid-email":
       return "Invalid email address.";
-    // Add more cases as needed
     default:
       return "An unexpected error occurred. Please try again.";
   }

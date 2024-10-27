@@ -62,7 +62,6 @@ const EditProfile = () => {
 
   const isSaveButtonDisabled = !displayName || displayName === initialDisplayName;
 
-  // Show loading state while user data is being fetched
   if (loadingUser) {
     return <PageFallback />;
   }

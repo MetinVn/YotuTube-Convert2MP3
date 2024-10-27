@@ -3,13 +3,11 @@ import { saveMP4, getAllMP4s } from "./mp4DB";
 import { youtube_parser } from "./YoutubeParser";
 import "react-toastify/dist/ReactToastify.css";
 
-// Calculate total size of MP4s for a specific user
 const calculateTotalSizeInMB = async (mp4s) => {
   const totalSizeInBytes = mp4s.reduce((total, mp4) => total + mp4.fileSize, 0);
-  return totalSizeInBytes / 1048576; // Convert bytes to MB
+  return totalSizeInBytes / 1048576;
 };
 
-// Check if adding a new MP4 exceeds the storage limit
 const checkStorageLimit = (totalSizeInMB, fileSizeInMB, storageLimit, triggerTheModal, isModalOpened) => {
   if (totalSizeInMB + fileSizeInMB > storageLimit) {
     if (!isModalOpened) {
@@ -20,7 +18,6 @@ const checkStorageLimit = (totalSizeInMB, fileSizeInMB, storageLimit, triggerThe
   return true;
 };
 
-// Main function to fetch MP4 data from the API
 export const fetchMP4Data = async (
   e,
   setLoading,
@@ -30,7 +27,7 @@ export const fetchMP4Data = async (
   storageLimit,
   triggerTheModal,
   isModalOpened,
-  userID // Added userID parameter
+  userID
 ) => {
   e.preventDefault();
   setLoading(true);
@@ -72,8 +69,8 @@ export const fetchMP4Data = async (
             "360p": response.data.link[18][0],
             "720p": response.data.link[22][0],
           },
-          userID, // Include userID in the MP4 data
-          fileSize: response.data.fileSize, // Assume this value is available in the response
+          userID,
+          fileSize: response.data.fileSize,
         };
 
         if (!mp4Data.links) {
@@ -83,8 +80,8 @@ export const fetchMP4Data = async (
           return;
         }
 
-        const existingMp4s = await getAllMP4s(); // Fetch all MP4s for the user
-        const userMp4s = existingMp4s.filter((mp4) => mp4.userID === userID); // Filter by userID
+        const existingMp4s = await getAllMP4s();
+        const userMp4s = existingMp4s.filter((mp4) => mp4.userID === userID);
 
         const isDuplicate = userMp4s.some((mp4) => mp4.title === mp4Data.title);
 
@@ -96,13 +93,12 @@ export const fetchMP4Data = async (
         }
 
         const totalSizeInMB = await calculateTotalSizeInMB(userMp4s);
-        const fileSizeInMB = mp4Data.fileSize / 1048576; // Convert bytes to MB
+        const fileSizeInMB = mp4Data.fileSize / 1048576;
 
-        // Check if the storage limit is exceeded
         const canSave = checkStorageLimit(totalSizeInMB, fileSizeInMB, storageLimit, triggerTheModal, isModalOpened);
 
         if (canSave) {
-          await saveMP4(mp4Data); // Save MP4 for the user
+          await saveMP4(mp4Data);
           setMp4List((prevList) => ({
             ...prevList,
             [youtubeID]: mp4Data,

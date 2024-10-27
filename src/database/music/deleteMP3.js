@@ -1,4 +1,4 @@
-import { firestore } from "../../firebase"; // Firestore instance import
+import { firestore } from "../../firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 
 export async function deleteMP3(user, item, toast) {

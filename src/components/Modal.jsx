@@ -20,7 +20,7 @@ const Modal = ({ isOpen = null, onClose = () => {}, paragraph = "", description 
           <Button
             type="button"
             onClick={onClose}
-            className="bg-[#4CAF50] text-white hover:bg-[#388E3C] focus:outline-none focus:ring-2 focus:ring-[#4CAF50]">
+            className="bg-[#4CAF50] px-2 py-1 text-white hover:bg-[#388E3C] focus:outline-none focus:ring-2 focus:ring-[#4CAF50]">
             Close
           </Button>
         </div>

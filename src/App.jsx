@@ -21,8 +21,16 @@ function App() {
   const options = [{ value: "mp3", label: "MP3" }];
   const [lastConvertedMP3, setLastConvertedMP3] = useState(null);
 
+  useEffect(() => {
+    const modalShown = localStorage.getItem("modalShown");
+    if (!modalShown) {
+      setModal(true);
+    }
+  }, []);
+
   const handleModal = () => {
     setModal(false);
+    localStorage.setItem("modalShown", "true");
   };
 
   const handleSelectChange = (e) => {

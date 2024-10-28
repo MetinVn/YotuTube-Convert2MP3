@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { toast, ToastContainer, Slide } from "react-toastify";
 
 import { fetchMP3Data } from "./utils/ConvertToMP3";
@@ -10,14 +10,20 @@ import Footer from "./components/Footer";
 import CustomSelect from "./components/ReactSelect";
 import { MP3Context } from "./contexts/MP3Context";
 import ResultLink from "./components/ResultLink";
+import Modal from "./components/Modal";
 
 function App() {
+  const [modal, setModal] = useState(false);
   const inputUrl = useRef(null);
   const [loading, setLoading] = useState(false);
   const [convertType, setConvertType] = useState("mp3");
   const { setMP3List } = useContext(MP3Context);
   const options = [{ value: "mp3", label: "MP3" }];
   const [lastConvertedMP3, setLastConvertedMP3] = useState(null);
+
+  const handleModal = () => {
+    setModal(false);
+  };
 
   const handleSelectChange = (e) => {
     setConvertType(e);
@@ -40,6 +46,15 @@ function App() {
 
   return (
     <>
+      {modal && (
+        <Modal
+          isOpen={modal}
+          onClose={handleModal}
+          description="For Registered Users"
+          paragraph="Enhance your experience by signing up! Once logged in, you'll easily access your converted MP3 list. You’ll have the ability to save your converted songs and listen to them with the integrated MP3 player. Log in to take advantage of our helpful features and make your music conversion process even smoother!"
+        />
+      )}
+
       <ToastContainer position="bottom-right" transition={Slide} stacked limit={8} />
       <div className="min-h-screen flex flex-col justify-between bg-[#1E1E1E] transition-all duration-300">
         <div className="flex flex-col justify-center items-center flex-grow my-20 md:mt-40">

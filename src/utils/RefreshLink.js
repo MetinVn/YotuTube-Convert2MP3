@@ -4,21 +4,10 @@ import { refreshMP3 } from "../database/music/refreshMP3";
 
 export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, fileSize, authUser, loadingUser) => {
   try {
-    let rangeEnd;
-    const tenMB = 10485760;
-
-    if (fileSize <= tenMB) {
-      rangeEnd = fileSize - 1;
-      console.log("File size is 10MB or less. Fetching the entire file for validation.");
-    } else {
-      rangeEnd = Math.floor(fileSize * 0.5) - 1;
-      console.log("File size is larger than 10MB. Fetching 50% of the file for validation.");
-    }
-
     const response = await fetch(itemUrl, {
       method: "GET",
       headers: {
-        Range: `bytes=0-${rangeEnd}`,
+        Range: `bytes=0-${fileSize - 1}`,
       },
     });
 
@@ -28,7 +17,7 @@ export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, file
     }
 
     toast.info("Executing link refresh.");
-    await refresh(toast, youtubeID, setMp3List, authUser, loadingUser);
+    await refreshLink(toast, youtubeID, setMp3List, authUser, loadingUser);
     return false;
   } catch (error) {
     console.error("Error checking the link:", error.message);
@@ -37,7 +26,7 @@ export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, file
   }
 };
 
-const refresh = async (toast, youtubeID, setMp3List, authUser, loadingUser) => {
+const refreshLink = async (toast, youtubeID, setMp3List, authUser, loadingUser) => {
   const allMP3s = await getAllMP3s(authUser, loadingUser);
   try {
     const options = {
@@ -62,13 +51,14 @@ const refresh = async (toast, youtubeID, setMp3List, authUser, loadingUser) => {
 
     const mp3ToUpdate = updatedMP3s.find((mp3) => mp3.youtubeID === youtubeID);
     if (mp3ToUpdate) {
-      await refreshMP3(youtubeID, mp3ToUpdate).then(() => {
-        setMp3List(updatedMP3s);
-        toast.success("Link refreshed and replaced successfully!");
-      });
+      await refreshMP3(youtubeID, mp3ToUpdate);
+      setMp3List(updatedMP3s);
+      toast.success("Link refreshed and replaced successfully!");
+      return true;
     }
   } catch (error) {
     toast.error("Failed to refresh the link. Please try again.");
     console.error("Error refreshing the link:", error);
+    return false;
   }
 };

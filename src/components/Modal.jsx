@@ -2,12 +2,7 @@ import React from "react";
 import { Transition } from "@headlessui/react";
 import Button from "./Button";
 
-const Modal = ({
-  isOpen = null,
-  onClose = () => {},
-  children = "",
-  description = "",
-}) => {
+const Modal = ({ isOpen = null, onClose = () => {}, paragraph = "", description = "" }) => {
   return (
     <Transition
       show={isOpen}
@@ -18,12 +13,10 @@ const Modal = ({
       leaveFrom="opacity-100"
       leaveTo="opacity-0">
       <div className="fixed inset-0 flex items-center justify-center z-50">
-        <div
-          className="fixed inset-0 bg-black opacity-60"
-          onClick={onClose}></div>
+        <div className="fixed inset-0 bg-black opacity-60" onClick={onClose}></div>
         <div className="bg-[#1E1E1E] p-8 rounded-lg shadow-lg relative z-10 max-w-lg mx-auto">
           <h2 className="text-xl font-bold mb-4 text-white">{description}</h2>
-          <p className="mb-4 text-[#ccc]">{children}</p>
+          <p className="mb-4 text-[#ccc]">{paragraph}</p>
           <Button
             type="button"
             onClick={onClose}

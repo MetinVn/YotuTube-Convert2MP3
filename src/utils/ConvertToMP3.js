@@ -47,7 +47,7 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
       youtubeURL: youtubeURLToUse,
     };
 
-    toast.success("MP3 added to Converted Music.");
+    toast.success("MP3 succesfully converted");
     setMP3List((prevList) => ({ ...prevList, [mp3Data.youtubeID]: mp3Data }));
     saveMP3(mp3Data);
     return mp3Data;

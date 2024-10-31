@@ -8,13 +8,13 @@ import Button from "../components/Button";
 import ResultLink from "../components/ResultLink";
 import LoadingAnimation from "../components/LoadingAnimation";
 
-import { formatFileSize } from "../utils/FormatFileSize";
+import { formatFileSize } from "../utils/formatFileSize";
 import { refreshMP3Link } from "../utils/RefreshLink";
 
 import { MP3Context } from "../contexts/MP3Context";
 
-import { DeleteMP3 } from "../database/music/deleteMP3";
-import { DeleteMP3Storage } from "../database/music/deleteMP3Storage";
+import { deleteMP3 } from "../database/music/deleteMP3";
+import { DeleteMP3 } from "../database/music/deleteMP3Storage";
 
 const ConvertedMusic = () => {
   const { setMP3List, mp3List, loading, setLoading } = useContext(MP3Context);
@@ -51,14 +51,14 @@ const ConvertedMusic = () => {
     if (Object.keys(mp3List).length === 0) {
       console.info("The list is already empty.");
     } else {
-      DeleteMP3Storage();
+      DeleteMP3();
       setMP3List({});
       console.info("List cleared.");
     }
   };
 
   const handleDeleteItem = async (key) => {
-    DeleteMP3(key);
+    deleteMP3(key);
     setMP3List((prevMp3List) => {
       const newMp3List = { ...prevMp3List };
       delete newMp3List[key];

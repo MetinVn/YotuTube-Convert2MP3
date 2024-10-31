@@ -6,11 +6,10 @@ export const MP3Context = createContext(null);
 
 export const MP3Provider = ({ children }) => {
   const [mp3List, setMP3List] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { authUser, loadingUser } = useContext(UserContext);
 
   async function renderMusic() {
-    setLoading(true);
     if (!loadingUser && authUser) {
       try {
         const allMP3s = await getAllMP3s(authUser, loadingUser);

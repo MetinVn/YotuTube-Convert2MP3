@@ -3,8 +3,7 @@ import { collection, getDocs } from "firebase/firestore";
 
 export const getAllMP3s = async (user, loadingState) => {
   try {
-    if (loadingState) {
-    } else {
+    if (!loadingState) {
       if (!user || !user.uid) {
         throw new Error("User is not logged in.");
       }

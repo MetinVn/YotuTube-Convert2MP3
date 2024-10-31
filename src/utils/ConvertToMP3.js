@@ -35,7 +35,11 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
     const { title, link, filesize } = response?.data;
 
     if (!link) {
-      toast.error("No link provided. Try lyrical songs or wait and retry.");
+      console.log(link);
+
+      toast.error(
+        "No link provided, may be restricted due to licensing issues. Consider checking alternative sources."
+      );
       return;
     }
 
@@ -48,7 +52,8 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
     };
 
     toast.success("MP3 succesfully converted");
-    setMP3List((prevList) => ({ ...prevList, [mp3Data.youtubeID]: mp3Data }));
+    setMP3List((prevList) => [...prevList, mp3Data]);
+
     saveMP3(mp3Data);
     return mp3Data;
   } catch (error) {

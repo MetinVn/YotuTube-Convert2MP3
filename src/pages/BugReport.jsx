@@ -29,7 +29,7 @@ const BugReport = () => {
       <form onSubmit={handleSubmit} className="bg-[#333] p-6 rounded shadow-md w-full max-w-md">
         <h2 className="text-white text-lg mb-4">Bug Report</h2>
 
-        <label className="text-gray-400 block mb-2">Name:</label>
+        <label className="text-gray-400 block mb-2">Name(Optional)</label>
         <input
           type="text"
           name="name"

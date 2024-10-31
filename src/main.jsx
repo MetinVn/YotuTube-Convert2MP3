@@ -19,7 +19,7 @@ const Credits = lazy(() => import("./pages/Credits.jsx"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
 const BugReport = lazy(() => import("./pages/BugReport.jsx"));
 // const ConvertedMusic = lazy(() => import("./pages/DisplayMusic.jsx"));
-const MP3Player = lazy(() => import("./layouts/MP3Player.jsx"));
+const MP3Player = lazy(() => import("./components/MP3Player.jsx"));
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -59,28 +59,3 @@ root.render(
     </Router>
   </React.StrictMode>
 );
-// ReactDOM.createRoot(document.getElementById("root")).render(
-//   <React.StrictMode>
-//     <Router>
-//       <UserProvider>
-//         <MP3Provider>
-//           <Header />
-//           <Suspense fallback={<PageFallback />}>
-//             <Routes>
-//               <Route path="/YotuTube-Convert2MP3/account" element={<ProtectedRoute element={<Account />} />} />
-//               <Route path="/YotuTube-Convert2MP3/music-list" element={<ProtectedRoute element={<MP3Player />} />} />
-//               <Route path="/YotuTube-Convert2MP3/account/edit" element={<ProtectedRoute element={<EditProfile />} />} />
-//               <Route path="/YotuTube-Convert2MP3/bug-report" element={<ProtectedRoute element={<BugReport />} />} />
-//               <Route index path="/YotuTube-Convert2MP3/" element={<App />} />
-//               <Route path="/YotuTube-Convert2MP3/signin" element={<Signin />} />
-//               <Route path="/YotuTube-Convert2MP3/login" element={<Login />} />
-//               <Route path="/YotuTube-Convert2MP3/credits" element={<Credits />} />
-//               <Route path="/YotuTube-Convert2MP3/reset-password" element={<ForgotPassword />} />
-//               <Route path="*" element={<ErrorPage />} />
-//             </Routes>
-//           </Suspense>
-//         </MP3Provider>
-//       </UserProvider>
-//     </Router>
-//   </React.StrictMode>
-// );

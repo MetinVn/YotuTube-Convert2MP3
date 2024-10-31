@@ -78,7 +78,7 @@ function App() {
                       type="search"
                       ref={inputUrl}
                       placeholder="Paste a YouTube video URL link..."
-                      className="sm:mx-0 text-white bg-[#333] border-[#444] "
+                      className="sm:mx-0 text-white bg-[#333] border-[#444]"
                     />
                     <CustomSelect
                       width={"100px"}

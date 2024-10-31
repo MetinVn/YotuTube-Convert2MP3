@@ -4,20 +4,19 @@
 
 - **React**: A JavaScript library for building user interfaces.
 - **Vite**: A fast build tool for modern web projects.
-- **IDB (IndexedDB)**: For storing and managing converted MP3s and MP4s, as well as theme preferences.
+- **Firebase**: For storing user data and managing converted files.
 
 ## Features
 
-- **Convert YouTube Links**: Paste a YouTube video URL and convert it to MP3 or MP4.
+- **Convert YouTube Links**: Paste a YouTube video URL and convert it to MP3 or MP4 format.
 - **Download MP3s and MP4s**: Save converted MP3 and MP4 files directly to your device.
-- **Clear List**: Manage and clear the list of converted files.
-- **Dark/Light Mode**: Switch between light and dark themes.
-- **System Theme Detection**: Automatically apply the system theme or toggle manually.
+- **User-Friendly Interface**: The app is designed for ease of use, making conversions quick and straightforward.
+- **No Charges**: This application is completely free to use, with no hidden fees or subscriptions.
 
 ## Configuration
 
-- **Theme**: Choose between light and dark modes. The app also supports system theme detection.
-- **MP3 and MP4 Storage**: Converted MP3s and MP4s are stored in IndexedDB, allowing you to manage them as needed.
+- **User Authentication**: Users can create an account to securely manage their converted files.
+- **Personalized Experience**: Each user can view and access their converted files, making it easy to keep track of their media.
 
 ## Contributing
 

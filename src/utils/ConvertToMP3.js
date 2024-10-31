@@ -38,7 +38,7 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
       console.log(link);
 
       toast.error(
-        "No link provided, may be restricted due to licensing issues. Consider checking alternative sources."
+        "No link provided, may be restricted due to licensing issues. Consider checking alternative sources or try again later."
       );
       return;
     }

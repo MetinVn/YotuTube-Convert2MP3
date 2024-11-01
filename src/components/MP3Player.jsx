@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback, useContext } from "react";
+import React, { useState, useRef, useEffect, useCallback, useContext, useMemo } from "react";
 import { FiPlay, FiPause, FiVolume2, FiRepeat } from "react-icons/fi";
 import { Slide, toast, ToastContainer } from "react-toastify";
 
@@ -16,31 +16,34 @@ import { UserContext } from "../contexts/UserContext";
 const MP3Player = () => {
   const { mp3List, setMP3List, loading } = useContext(MP3Context);
   const { authUser, loadingUser } = useContext(UserContext);
-  const [playingIndex, setPlayingIndex] = useState(null);
   const [loopingStates, setLoopingStates] = useState({});
   const [refreshingItem, setRefreshingItem] = useState(null);
-
   const [mp3Object, setMP3Object] = useState({ volumes: {}, progresses: {}, tooltips: {} });
   const [durations, setDurations] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
-  const [isAnySongPlaying, setPlayingSong] = useState({});
   const audioRefs = useRef([]);
-  const audioCurrent = audioRefs.current;
 
-  const handlePlayPause = (index) => {
-    const audioRef = audioCurrent[index];
-    setPlayingSong((prevState) => ({
-      ...Object.keys(prevState).reduce((acc, key) => {
-        acc[key] = false;
-        return acc;
-      }, {}),
-      [index]: !prevState[index],
-    }));
-    audioRef.paused ? audioRef.play() : audioRef.pause();
-    setPlayingIndex(index);
-  };
+  const [activeIndex, setActiveIndex] = useState(null);
 
-  const handleProgressChange = (e, index) => {
+  const handlePlayPause = useCallback(
+    (index) => {
+      const audioRef = audioRefs.current[index];
+      if (activeIndex !== null && activeIndex !== index) {
+        audioRefs.current[activeIndex]?.pause();
+      }
+
+      if (audioRef?.paused) {
+        audioRef?.play();
+        setActiveIndex(index);
+      } else {
+        audioRef?.pause();
+        setActiveIndex(null);
+      }
+    },
+    [activeIndex]
+  );
+
+  const handleProgressChange = useCallback((e, index) => {
     const audioElement = audioRefs.current[index];
     if (audioElement) {
       const newTime = (e.target.value / 100) * audioElement.duration;
@@ -54,18 +57,7 @@ const MP3Player = () => {
         },
       }));
     }
-  };
-
-  const handleNextTrack = useCallback(() => {
-    const nextIndex = (playingIndex + 1) % mp3List.length;
-    setPlayingIndex(nextIndex);
-  }, [playingIndex, mp3List]);
-
-  const handlePreviousTrack = useCallback(() => {
-    const prevIndex = (playingIndex - 1 + mp3List.length) % mp3List.length;
-    true;
-    setPlayingIndex(prevIndex);
-  }, [playingIndex, mp3List]);
+  }, []);
 
   const handleVolumeChange = useCallback((e, index) => {
     const newVolume = e.target.value;
@@ -76,10 +68,10 @@ const MP3Player = () => {
         [index]: newVolume,
       },
     }));
-    audioCurrent[index].volume = newVolume;
+    audioRefs.current[index].volume = newVolume;
   }, []);
 
-  const updateProgress = (index) => {
+  const updateProgress = useCallback((index) => {
     const audioElement = audioRefs.current[index];
     if (audioElement) {
       setMP3Object((prev) => ({
@@ -90,7 +82,7 @@ const MP3Player = () => {
         },
       }));
     }
-  };
+  }, []);
 
   useEffect(() => {
     mp3List.forEach((_, index) => {
@@ -98,62 +90,71 @@ const MP3Player = () => {
       if (audioElement) {
         const handleTimeUpdate = () => updateProgress(index);
         audioElement.addEventListener("timeupdate", handleTimeUpdate);
-
         return () => audioElement.removeEventListener("timeupdate", handleTimeUpdate);
       }
     });
-  }, [mp3List]);
+  }, [mp3List, updateProgress]);
 
   useEffect(() => {
-    const playAudio = async () => {
-      if (playingIndex !== null) {
+    if (activeIndex !== null) {
+      const playAudio = async () => {
         try {
-          await audioCurrent[playingIndex].play();
+          await audioRefs.current[activeIndex].play();
         } catch (error) {
           toast.error("Playback failed. Try refreshing the link.");
         }
-        audioCurrent.forEach((audio, index) => {
-          if (audio && index !== playingIndex) {
+        audioRefs.current.forEach((audio, index) => {
+          if (audio && index !== activeIndex) {
             audio.pause();
           }
         });
+      };
+      playAudio();
+    }
+  }, [activeIndex]);
+
+  const updateDuration = useCallback(
+    (index) => {
+      const audio = audioRefs.current[index];
+      if (audio && isFinite(audio.duration)) {
+        setDurations((prev) => ({
+          ...prev,
+          [index]: audio.duration,
+        }));
       }
-    };
-    playAudio();
-  }, [playingIndex]);
+    },
+    [audioRefs.current]
+  );
 
-  const updateDuration = (index) => {
-    const audio = audioCurrent[index];
-    if (audio && isFinite(audio.duration)) {
-      setDurations((prev) => ({
+  const toggleLoop = useCallback(
+    (index) => {
+      const title = mp3List[index]?.title;
+      const newLoopingState = !loopingStates[index];
+
+      setLoopingStates((prev) => ({
         ...prev,
-        [index]: audio.duration,
+        [index]: newLoopingState,
       }));
-    }
-  };
-  const toggleLoop = (index) => {
-    const title = mp3List[index]?.title;
-    const newLoopingState = !loopingStates[index];
 
-    setLoopingStates((prevLoopingStates) => ({
-      ...prevLoopingStates,
-      [index]: newLoopingState,
-    }));
+      const audio = audioRefs.current[index];
+      if (audio) {
+        audio.loop = newLoopingState;
+      }
 
-    const audio = audioRefs.current[index];
-    if (audio) {
-      audio.loop = newLoopingState;
-    }
+      toast.dark(
+        newLoopingState ? `Looping enabled for: ${title || "music"}` : `Looping disabled for: ${title || "music"}`
+      );
+    },
+    [loopingStates, mp3List]
+  );
 
-    toast.dark(newLoopingState ? `Looping enabled for: ${title}` : `Looping disabled for: ${title}`);
-  };
-
-  const formatDuration = (duration) => {
+  const formatDuration = useCallback((duration) => {
     if (!isFinite(duration)) return "00:00";
     const minutes = Math.floor(duration / 60);
     const seconds = Math.floor(duration % 60);
     return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-  };
+  }, []);
+
   const handleRefreshLink = async (mp3Item) => {
     setRefreshingItem(mp3Item.url);
     try {
@@ -164,6 +165,7 @@ const MP3Player = () => {
       setRefreshingItem(null);
     }
   };
+
   const handleDeleteItem = async (key) => {
     if (authUser) {
       await deleteMP3(authUser, key.youtubeID, toast, key.title);
@@ -172,6 +174,7 @@ const MP3Player = () => {
       toast.error("You need to be logged in to delete this song.");
     }
   };
+
   const loadingScreen = (
     <div className="flex min-h-screen">
       <section className="flex-grow">
@@ -179,14 +182,17 @@ const MP3Player = () => {
       </section>
     </div>
   );
+
   const noMp3ListMessage = (
     <p className="text-lg text-center text-gray-300 h-screen">Convert any music to be able to listen to it here.</p>
   );
+
   const noResultsMessage = (
     <p className="text-lg text-center text-gray-300 h-screen">
       No music matches your search. Try being more case-sensitive.
     </p>
   );
+
   const PlayButton = ({ isPlaying, onClick }) => (
     <Button
       aria_label="Play&Pause"
@@ -201,6 +207,7 @@ const MP3Player = () => {
       className="p-2 rounded-full bg-transparent hover:bg-[#777]"
     />
   );
+
   const ActionButtons = ({ onRefresh, onDelete }) => (
     <div className="flex space-x-1 sm:space-x-4">
       <Button
@@ -217,7 +224,8 @@ const MP3Player = () => {
       />
     </div>
   );
-  const ProgressBar = ({ progress, onChange, tooltip }) => (
+
+  const ProgressBar = ({ progress, onChange }) => (
     <div className="relative w-full h-2 bg-gray-600 rounded-full max-w-[1000px]">
       <div className="absolute top-0 left-0 h-full bg-green-500 rounded-full" style={{ width: `${progress}%` }} />
       <input
@@ -229,9 +237,9 @@ const MP3Player = () => {
         value={progress}
         onChange={onChange}
       />
-      {tooltip?.visible && <div style={{ position: "absolute", left: tooltip.x, top: tooltip.y }}>{tooltip.time}</div>}
     </div>
   );
+
   const LoopAndVolumeControls = ({ isLooping, onLoopToggle, volume, onVolumeChange, fileSize }) => (
     <div className="flex items-center space-x-4 w-full">
       <Button
@@ -256,11 +264,89 @@ const MP3Player = () => {
     </div>
   );
 
+  const renderTrack = useCallback(
+    (key, index) => {
+      const isCurrentTrackPlaying = index === activeIndex;
+      const isRefreshing = refreshingItem === key.url;
+      const duration = formatDuration(durations[index] || 0);
+
+      return (
+        <li
+          key={index}
+          className={` ${isRefreshing ? "cursor-wait" : "cursor-default"} p-3 sm:p-6 border rounded-lg ${
+            isCurrentTrackPlaying ? "bg-[#494949] border-[#4ada31]" : "bg-[#333] border-[#444]"
+          } shadow-md transition-colors duration-300 max-w-full`}>
+          {isRefreshing ? (
+            <LoadingAnimation />
+          ) : (
+            <div className="flex flex-col items-center space-y-2 sm:space-y-4 w-full max-w-[1000px] mx-auto">
+              <div className="flex flex-col justify-start items-start text-start w-full space-y-3">
+                <div className="flex items-center w-full">
+                  <PlayButton isPlaying={isCurrentTrackPlaying} onClick={() => handlePlayPause(index)} />
+                  <ResultLink
+                    className="text-sm sm:text-xl"
+                    target="_blank"
+                    url={key.youtubeURL}
+                    href={key.url}
+                    title={key.title}
+                  />
+                </div>
+                <div className="flex justify-between w-full space-x-4">
+                  <ActionButtons onRefresh={() => handleRefreshLink(key)} onDelete={() => handleDeleteItem(key)} />
+                </div>
+                <p className="text-sm text-gray-400 whitespace-nowrap">Duration: {duration}</p>
+              </div>
+              <audio
+                ref={(el) => (audioRefs.current[index] = el)}
+                src={key.url}
+                preload="metadata"
+                onLoadedMetadata={() => updateDuration(index)}
+              />
+              {/* ProgressBar and LoopAndVolumeControls rendered here */}
+              <ProgressBar
+                progress={mp3Object.progresses[index] || 0}
+                onChange={(e) => handleProgressChange(e, index)}
+              />
+              <LoopAndVolumeControls
+                isLooping={loopingStates[index] || false}
+                onLoopToggle={() => toggleLoop(index)}
+                volume={mp3Object.volumes[index] || 0.5}
+                onVolumeChange={(e) => handleVolumeChange(e, index)}
+                fileSize={formatFileSize(key.fileSize)}
+              />
+            </div>
+          )}
+        </li>
+      );
+    },
+    [
+      activeIndex,
+      mp3Object,
+      handlePlayPause,
+      handleRefreshLink,
+      handleDeleteItem,
+      toggleLoop,
+      handleVolumeChange,
+      handleProgressChange,
+    ]
+  );
+
+  const trackList = useMemo(
+    () => (
+      <ul className="space-y-4 sm:space-y-6 text-ssm max-w-[1000px] w-full min-h-screen mx-auto">
+        {mp3List.map((key, index) => renderTrack(key, index))}
+      </ul>
+    ),
+    [mp3List, renderTrack]
+  );
+
   return (
     <div className="bg-[#1E1E1E] pt-20 px-2 sm:px-6 py-14 sm:py-8">
       <ToastContainer stacked position="bottom-right" transition={Slide} limit={8} />
       <div className="bg-[#1E1E1E] p-4 flex justify-center items-center space-x-8">
-        <h1 className="text-2xl font-bold text-white ">Music Player</h1>
+        <h1 className="text-2xl font-bold text-white ">
+          <span>{mp3List.length}</span> Songs
+        </h1>
         <Input
           type="search"
           placeholder="Search for a song"
@@ -269,74 +355,9 @@ const MP3Player = () => {
           className="my-4 text-white bg-[#333] border-[#444] rounded w-full max-w-[600px] p-2"
         />
       </div>
-
-      {loading ? (
-        loadingScreen
-      ) : Object.keys(mp3List).length === 0 ? (
-        noMp3ListMessage
-      ) : (
-        <ul className="space-y-4 sm:space-y-6 text-ssm max-w-[1000px] w-full min-h-screen mx-auto">
-          {mp3List.map((key, index) => {
-            const isCurrentTrackPlaying = isAnySongPlaying[index] && !audioCurrent[index]?.paused;
-
-            const isCurrentTrackLooping = loopingStates[index] || false;
-            const duration = formatDuration(durations[index] || 0);
-            const isRefreshing = refreshingItem === key.url;
-
-            return (
-              <li
-                key={index}
-                className={` ${isRefreshing ? "cursor-wait" : "cursor-default"} p-3 sm:p-6 border rounded-lg ${
-                  isCurrentTrackPlaying ? "bg-[#494949] border-[#4ada31]" : "bg-[#333] border-[#444]"
-                } shadow-md transition-colors duration-300 max-w-full`}>
-                {isRefreshing ? (
-                  <LoadingAnimation />
-                ) : (
-                  <div className="flex flex-col items-center space-y-2 sm:space-y-4 w-full max-w-[1000px] mx-auto">
-                    <div className="flex flex-col justify-start items-start text-start w-full space-y-3">
-                      <div className="flex items-center w-full">
-                        <PlayButton isPlaying={isCurrentTrackPlaying} onClick={() => handlePlayPause(index)} />
-                        <ResultLink
-                          className="text-sm sm:text-xl"
-                          target="_blank"
-                          url={key.youtubeURL}
-                          href={key.url}
-                          title={key.title}
-                        />
-                      </div>
-                      <div className="flex justify-between w-full space-x-4">
-                        <ActionButtons
-                          onRefresh={() => handleRefreshLink(key)}
-                          onDelete={() => handleDeleteItem(key)}
-                        />
-                      </div>
-                      <p className="text-sm text-gray-400 whitespace-nowrap">Duration: {duration}</p>
-                    </div>
-                    <ProgressBar
-                      progress={mp3Object.progresses[index] || 0}
-                      onChange={(e) => handleProgressChange(e, index)}
-                      tooltip={mp3Object.tooltips[index]}
-                    />
-                    <LoopAndVolumeControls
-                      isLooping={isCurrentTrackLooping}
-                      onLoopToggle={() => toggleLoop(index)}
-                      volume={mp3Object.volumes[index] || 0.5}
-                      onVolumeChange={(e) => handleVolumeChange(e, index)}
-                      fileSize={formatFileSize(key.fileSize)}
-                    />
-                    <audio
-                      ref={(el) => (audioRefs.current[index] = el)}
-                      src={key.url}
-                      preload="metadata"
-                      onLoadedMetadata={() => updateDuration(index)}
-                    />
-                  </div>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      )}
+      {loading && loadingScreen}
+      {mp3List.length === 0 && noMp3ListMessage}
+      {trackList}
     </div>
   );
 };

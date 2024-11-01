@@ -33,6 +33,7 @@ const BugReport = () => {
         <input
           type="text"
           name="name"
+          placeholder="Name"
           value={formData.name}
           onChange={handleChange}
           className="w-full p-2 mb-4 bg-[#444] border border-[#555] text-white"
@@ -42,6 +43,7 @@ const BugReport = () => {
         <input
           type="email"
           name="email"
+          placeholder="Email"
           value={formData.email}
           onChange={handleChange}
           className="w-full p-2 mb-4 bg-[#444] border border-[#555] text-white"
@@ -55,7 +57,8 @@ const BugReport = () => {
           onChange={handleChange}
           className="w-full p-2 mb-4 bg-[#444] border border-[#555] text-white"
           rows="4"
-          required></textarea>
+          required
+          placeholder="Try to me more explicit e.g: The converter takes too long to convert to mp3 "></textarea>
 
         <button type="submit" className="w-full p-2 bg-[#4CAF50] text-white hover:bg-[#45a049] transition">
           Submit

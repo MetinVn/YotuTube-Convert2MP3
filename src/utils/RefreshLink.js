@@ -5,24 +5,31 @@ import { refreshMP3 } from "../database/music/refreshMP3";
 export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, fileSize, authUser, loadingUser) => {
   try {
     const response = await fetch(itemUrl, {
-      method: "GET",
+      method: "HEAD",
       headers: {
-        Range: `bytes=0-${fileSize - 1}`,
+        "Cache-Control": "no-cache",
       },
     });
 
+    // Check for specific statuses indicating validity or refresh need
     if (response.status === 206 || response.status === 200) {
       toast.info(`Link is fresh and valid`);
       return true;
+    } else if (response.status === 401 || response.status === 410) {
+      toast.info("Link requires refresh due to 401/410 status.");
+      await refreshLink(toast, youtubeID, setMp3List, authUser, loadingUser);
+      return false;
     }
 
-    toast.info("Executing link refresh.");
+    // Handle other unexpected statuses
+    toast.error("Unexpected status encountered. Link might need refresh.");
     await refreshLink(toast, youtubeID, setMp3List, authUser, loadingUser);
     return false;
   } catch (error) {
     console.error("Error checking the link:", error.message);
-    toast.error("Error checking the link.");
-    return null;
+    toast.info("Link checks failed. Attempting to refresh.");
+    await refreshLink(toast, youtubeID, setMp3List, authUser, loadingUser);
+    return false;
   }
 };
 

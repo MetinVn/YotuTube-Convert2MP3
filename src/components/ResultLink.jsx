@@ -27,7 +27,7 @@ const ResultLink = ({ href, url, title, button = true, target = "_blank", classN
       <Link
         to={href}
         download
-        className={`underline text-justify sm:no-underline text-white hover:underline transition duration-300 ${className}`}
+        className={`underline text-justify sm:no-underline text-white hover:underline ${className}`}
         target={target}
         rel="noopener noreferrer">
         {title}

@@ -51,10 +51,14 @@ const Dashboard = () => {
   return (
     <div
       ref={menuRef}
-      className={`fixed top-0 left-0 pt-5 bg-[#1E1E1E] w-0 overflow-hidden h-screen transition-all ease-in-out duration-300 ${
-        isMenuOpen ? "w-[320px]" : "w-0"
-      }`}>
-      <div className="z-50 fixed top-2 left-2">
+      className={`fixed top-0 left-0 pt-5 bg-[#1E1E1E] h-screen transition-all ease-in-out duration-300 ${
+        isMenuOpen ? "w-[320px] border-r border-r-[#4CAF50]" : "w-0 overflow-hidden"
+      } z-[9999]`}>
+      {" "}
+      {/* Increased z-index for priority */}
+      <div className="fixed top-2 left-2 z-[10000]">
+        {" "}
+        {/* Ensure button is on top */}
         <Button
           children={<FiMenu className="stroke-[#4CAF50]" size={25} />}
           type="button"
@@ -64,7 +68,7 @@ const Dashboard = () => {
         />
       </div>
       <div
-        className={`absolute h-full overflow-y-scroll w-full overflow-x-hidden py-10 max-w-[1000px] mx-auto p-4 transition-opacity duration-300 ${
+        className={`absolute h-full overflow-y-auto w-full overflow-x-hidden py-10 max-w-[1000px] mx-auto p-4 transition-opacity duration-300 ${
           isMenuOpen ? "opacity-100" : "opacity-0"
         }`}>
         {isMenuOpen && (

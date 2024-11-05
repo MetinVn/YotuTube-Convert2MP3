@@ -28,11 +28,11 @@ const EditProfile = () => {
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (displayName.trim() === displayName && displayName !== initialDisplayName) {
+      if (displayName.trim() !== initialDisplayName && displayName.trim() === displayName) {
         await updateUserProfile(displayName);
         setSuccess("Profile updated successfully!");
       } else {
-        setError("Display name contains leading or trailing spaces, or it's the same as the current one.");
+        setError("Display name is either unchanged or contains leading/trailing spaces.");
       }
     } catch (error) {
       setError(error.message);
@@ -41,18 +41,17 @@ const EditProfile = () => {
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    if (currentPassword.trim() === newPassword.trim()) {
-      toast.info("New password can't be the same as the old one.");
-      return new Error("New password can't be the same as the old one");
-    } else {
-      try {
-        await changePassword(currentPassword, newPassword);
-        setSuccess("Password updated successfully!");
-        setCurrentPassword("");
-        setNewPassword("");
-      } catch (error) {
-        setError(error.message);
-      }
+    if (currentPassword === newPassword) {
+      toast.info("New password cannot be the same as the old one.");
+      return new Error("New password cannot be the same as the old one");
+    }
+    try {
+      await changePassword(currentPassword, newPassword);
+      setSuccess("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -75,16 +74,17 @@ const EditProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#1E1E1E] transition-colors duration-300 p-6">
-      <div className="max-w-screen-lg mx-auto p-6 pt-20">
-        <h1 className="text-4xl font-bold text-white mb-6">Edit Your Profile</h1>
-        {error && <p className="mb-4 text-red-400">{error}</p>}
-        {success && <p className="mb-4 text-[#4CAF50]">{success}</p>}
+    <div className="min-h-screen bg-[#1E1E1E] text-white py-28 px-6">
+      <div className="max-w-lg mx-auto p-8 bg-[#2C2C2C] rounded-md shadow-lg">
+        <h1 className="text-3xl font-bold mb-8">Edit Profile</h1>
+
+        {error && <p className="mb-4 text-red-500">{error}</p>}
+        {success && <p className="mb-4 text-green-500">{success}</p>}
 
         {/* Display Name Form */}
-        <form onSubmit={handleProfileSubmit} className="flex flex-col">
+        <form onSubmit={handleProfileSubmit} className="space-y-6">
           <div>
-            <label htmlFor="displayName" className="block text-lg font-semibold text-white mb-2">
+            <label htmlFor="displayName" className="block text-lg font-medium mb-2">
               Display Name
             </label>
             <Input
@@ -92,7 +92,7 @@ const EditProfile = () => {
               id="displayName"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              className="w-full p-2 mb-4 bg-[#444] border border-[#555] text-white"
+              className="w-full p-3 bg-[#444] border border-[#555] rounded-md text-white"
               placeholder="Enter your display name"
               required
             />
@@ -102,51 +102,49 @@ const EditProfile = () => {
             disabled={isSaveButtonDisabled}
             children="Save Display Name"
             type="submit"
-            className="self-start px-4 py-2 bg-[#4CAF50] text-white rounded hover:bg-[#388E3C] transition-colors duration-300"
+            className="w-full px-4 py-3 bg-[#4CAF50] text-white rounded-md hover:bg-[#388E3C] transition-colors duration-300"
           />
         </form>
 
         {/* Password Change Form */}
-        <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-6 mt-8">
+        <form onSubmit={handlePasswordSubmit} className="space-y-6 mt-10">
           <div>
-            <label htmlFor="currentPassword" className="block text-lg font-semibold text-white mb-2">
+            <label htmlFor="currentPassword" className="block text-lg font-medium mb-2">
               Current Password
             </label>
             <Input
-              password={true}
               type="password"
               id="currentPassword"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full p-2 bg-[#444] border border-[#555] text-white "
+              className="w-full p-3 bg-[#444] border border-[#555] rounded-md text-white"
               placeholder="Enter your current password"
               required
             />
           </div>
           <div>
-            <label htmlFor="newPassword" className="block text-lg font-semibold text-[#333333] dark:text-white mb-2">
+            <label htmlFor="newPassword" className="block text-lg font-medium mb-2">
               New Password
             </label>
             <Input
-              password={true}
               type="password"
               id="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full p-2 bg-[#444] border border-[#555] text-white"
+              className="w-full p-3 bg-[#444] border border-[#555] rounded-md text-white"
               placeholder="Enter your new password"
               required
             />
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between">
             <Button
               aria_label="Change Password"
               children="Change Password"
               type="submit"
-              className="self-start px-4 py-2 bg-[#4CAF50] text-white rounded hover:bg-[#388E3C] transition-colors duration-300"
+              className="px-4 py-3 bg-[#4CAF50] text-white rounded-md hover:bg-[#388E3C] transition-colors duration-300"
             />
             <Link to="/YotuTube-Convert2MP3/reset-password" title="Reset password">
-              <span className="dark:text-white hover:underline">Forgot password?</span>
+              <span className="hover:underline text-sm text-gray-300">Forgot password?</span>
             </Link>
           </div>
         </form>
@@ -155,10 +153,10 @@ const EditProfile = () => {
           aria_label="Cancel"
           children="Cancel"
           onClick={handleCancel}
-          className="mt-6 px-4 py-2 rounded bg-[#555] text-[#FF5252] hover:bg-[#777]"
+          className="mt-8 w-full px-4 py-3 bg-gray-600 text-red-400 rounded-md hover:bg-gray-700 transition-colors duration-300"
         />
       </div>
-      <ToastContainer stacked position="bottom-right" />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

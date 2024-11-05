@@ -22,6 +22,7 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
   try {
     const options = {
       method: "get",
+      cache: "no-store",
       url: "https://youtube-mp36.p.rapidapi.com/dl",
       headers: {
         "X-RapidAPI-Key": import.meta.env.VITE_RAPID_API_KEY,
@@ -35,10 +36,8 @@ export const fetchMP3Data = async (e, mp3inputUrl, setMP3List, toast) => {
     const { title, link, filesize } = response?.data;
 
     if (!link) {
-      console.log(link);
-
       toast.error(
-        "No link provided, may be restricted due to licensing issues. Consider checking alternative sources or try again later."
+        "Couldn't convert link, may be restricted due to licensing issues. Consider checking alternative sources or try again later."
       );
       return;
     }

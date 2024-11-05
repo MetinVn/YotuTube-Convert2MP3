@@ -16,6 +16,7 @@ const Input = forwardRef(({ className, type = "text", password = false, ...props
   return (
     <div className="max-w-3xl w-full my-2 relative flex items-center">
       <input
+        style={{ zIndex: 0 }}
         autoComplete="true"
         ref={ref}
         type={password && showPassword ? "text" : type}

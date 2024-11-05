@@ -63,7 +63,14 @@ function App() {
         />
       )}
 
-      <ToastContainer position="bottom-right" transition={Slide} stacked limit={8} />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={2000}
+        closeOnClick={true}
+        transition={Slide}
+        stacked
+        limit={8}
+      />
       <div className="min-h-screen flex flex-col justify-between bg-[#1E1E1E] transition-all duration-300">
         <div className="flex flex-col justify-center items-center flex-grow my-20 md:mt-40">
           <h1 className="text-2xl text-center sm:text-4xl font-semibold text-white mb-4">YouTube Converter</h1>
@@ -73,7 +80,7 @@ function App() {
                 <LoadingAnimation />
               ) : (
                 <div className="flex flex-col mx-1 items-center justify-center gap-2">
-                  <div className="w-full flex items-center gap-1 sm:gap-2">
+                  <div className="w-full flex items-center gap-1 sm:gap-2 ">
                     <Input
                       type="search"
                       ref={inputUrl}

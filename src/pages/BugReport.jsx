@@ -57,8 +57,9 @@ const BugReport = () => {
           onChange={handleChange}
           className="w-full p-2 mb-4 bg-[#444] border border-[#555] text-white"
           rows="4"
+          minLength={45}
           required
-          placeholder="Try to me more explicit e.g: The converter takes too long to convert to mp3 "></textarea>
+          placeholder="Describe the bug in detail, e.g., 'The MP3 converter stalls at 50%,' or 'Error message appears when clicking download.'"></textarea>
 
         <button type="submit" className="w-full p-2 bg-[#4CAF50] text-white hover:bg-[#45a049] transition">
           Submit

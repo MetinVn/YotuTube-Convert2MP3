@@ -9,6 +9,7 @@ import "./index.css";
 import ProtectedRoute from "./components/ProtectedRoutes.jsx";
 import PageFallback from "./components/PageFallback.jsx";
 const Header = lazy(() => import("./components/Header.jsx"));
+const MP3Dashboard = lazy(() => import("./components/MP3Dashboard.jsx"));
 
 const EditProfile = lazy(() => import("./pages/EditAccount.jsx"));
 const Signin = lazy(() => import("./pages/Signin.jsx"));
@@ -18,8 +19,8 @@ const ErrorPage = lazy(() => import("./pages/ErrorPage.jsx"));
 const Credits = lazy(() => import("./pages/Credits.jsx"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword.jsx"));
 const BugReport = lazy(() => import("./pages/BugReport.jsx"));
-// const ConvertedMusic = lazy(() => import("./pages/DisplayMusic.jsx"));
-const MP3Player = lazy(() => import("./components/MP3Player.jsx"));
+// const ConvertedMusic = lazy(() => import("./components/DisplayMusic.jsx"));
+// const NowPlaying = lazy(() => import("./components/NowPlaying.jsx"));
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -34,7 +35,7 @@ root.render(
               <Route
                 exact
                 path="/YotuTube-Convert2MP3/music-list"
-                element={<ProtectedRoute element={<MP3Player />} />}
+                element={<ProtectedRoute element={<MP3Dashboard />} />}
               />
               <Route
                 exact

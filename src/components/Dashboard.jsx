@@ -55,10 +55,7 @@ const Dashboard = () => {
         isMenuOpen ? "w-[320px] border-r border-r-[#4CAF50]" : "w-0 overflow-hidden"
       } z-[9999]`}>
       {" "}
-      {/* Increased z-index for priority */}
       <div className="fixed top-2 left-2 z-[10000]">
-        {" "}
-        {/* Ensure button is on top */}
         <Button
           children={<FiMenu className="stroke-[#4CAF50]" size={25} />}
           type="button"

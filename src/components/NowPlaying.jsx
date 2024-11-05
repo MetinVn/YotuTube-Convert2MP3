@@ -68,7 +68,6 @@ const NowPlaying = ({ mp3, onClose, toast, nextTrack }) => {
         })
         .catch((error) => {
           console.error("Error playing audio:", error);
-          // Retry only if below max retries
           if (retries < MAX_RETRIES) {
             setRetries(retries + 1);
             loadTrack(mp3);
@@ -115,14 +114,13 @@ const NowPlaying = ({ mp3, onClose, toast, nextTrack }) => {
     setIsPlaying(false);
     setProgress(0);
     if (isLooping) {
-      playAudio(); // Replay the same track if looping is enabled
+      playAudio();
     } else {
-      nextTrack(); // Move to the next track
+      nextTrack();
     }
   };
 
   useEffect(() => {
-    // Load the new track on mp3 change
     if (mp3) loadTrack(mp3);
     return () => {
       if (audioRef.current) {

@@ -6,7 +6,7 @@ import { FaSyncAlt } from "react-icons/fa";
 const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List }) => {
   const [artists, setArtists] = useState([]);
   const [error, setError] = useState(null);
-  const [failedMP3s, setFailedMP3s] = useState(new Map()); // Track failed MP3s with their respective IDs
+  const [failedMP3s, setFailedMP3s] = useState(new Map());
   const [loading, setLoading] = useState(false);
   const artistsFetchedRef = useRef(new Map());
 
@@ -30,7 +30,6 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
       setArtists([...artistSet]);
       artistsFetchedRef.current = new Map(artistToMp3Map);
 
-      // Remove from failed MP3s map if previously failed
       setFailedMP3s((prevFailed) => {
         const updatedFailed = new Map(prevFailed);
         updatedFailed.delete(mp3.id);
@@ -38,7 +37,7 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
       });
     } catch (error) {
       console.error(error);
-      setFailedMP3s((prevFailed) => new Map(prevFailed).set(mp3.id, mp3)); // Track failed MP3
+      setFailedMP3s((prevFailed) => new Map(prevFailed).set(mp3.id, mp3));
     }
   };
 
@@ -57,13 +56,11 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
 
   const handleRefreshSingleLink = async (mp3) => {
     try {
-      await refreshMP3Link(mp3); // Request to refresh the MP3 link
-      // Wait until loadingRefresh is false before continuing
+      await refreshMP3Link(mp3);
       while (loadingRefresh) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      // Fetch updated metadata after refreshing the link
       const artistSet = new Set(artists);
       const artistToMp3Map = new Map(artistsFetchedRef.current);
       await fetchSongData(mp3, artistSet, artistToMp3Map);

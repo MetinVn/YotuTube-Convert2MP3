@@ -53,13 +53,11 @@ const DisplayAlbum = ({ refreshMP3Link, loadingRefresh, loading, setCurrentMP3, 
 
   const handleRefreshSingleLink = async (mp3) => {
     try {
-      await refreshMP3Link(mp3); // Request to refresh the MP3 link
-      // Wait until loadingRefresh is false before continuing
+      await refreshMP3Link(mp3);
       while (loadingRefresh) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      // Fetch updated metadata after refreshing the link
       const albumSet = new Set(albums);
       const albumToMp3Map = new Map(albumsFetchedRef.current);
       await fetchSongData(mp3, albumSet, albumToMp3Map);

@@ -14,7 +14,7 @@ const ProgressBar = ({ progress, onChange, duration }) => {
         <span className="relative z-10 pointer-events-none">{formattedProgress}</span>
         <span className="relative z-10 pointer-events-none">{formatTime(duration)}</span>
       </div>
-      {/* Progress bar background (unplayed portion) */}
+      {/* Progress bar background  */}
       <div className="absolute inset-0 h-full bg-gray-600 rounded-lg"></div>
       {/* Played portion of the progress bar */}
       <div

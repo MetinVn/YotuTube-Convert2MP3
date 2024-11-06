@@ -48,6 +48,8 @@ const DisplayMusic = ({
     <div className="max-w-[1550px] w-full mt-20 flex justify-center mx-auto">
       {loading ? (
         <LoadingAnimation />
+      ) : mp3List.length === 0 ? (
+        <div>No tracks found</div>
       ) : (
         <div className="w-full overflow-x-auto px-2">
           <h2 className="text-2xl font-bold mb-6 text-white text-center">Songs</h2>

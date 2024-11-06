@@ -3,11 +3,11 @@ import { parseBlob } from "music-metadata";
 import CircleLoader from "./LoadingAnimation";
 import { FaSyncAlt } from "react-icons/fa";
 
-const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List }) => {
+const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List, loading }) => {
   const [artists, setArtists] = useState([]);
   const [error, setError] = useState(null);
   const [failedMP3s, setFailedMP3s] = useState(new Map());
-  const [loading, setLoading] = useState(false);
+  const [loadingArtist, setLoadingArtist] = useState(false);
   const artistsFetchedRef = useRef(new Map());
 
   const fetchSongData = async (mp3, artistSet, artistToMp3Map) => {
@@ -43,12 +43,12 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
 
   useEffect(() => {
     const fetchArtists = async () => {
-      setLoading(true);
+      setLoadingArtist(true);
       const artistSet = new Set();
       const artistToMp3Map = new Map();
 
       await Promise.all(mp3List.map((mp3) => fetchSongData(mp3, artistSet, artistToMp3Map)));
-      setLoading(false);
+      setLoadingArtist(false);
     };
 
     if (mp3List.length > 0) fetchArtists();
@@ -65,6 +65,7 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
       const artistToMp3Map = new Map(artistsFetchedRef.current);
       await fetchSongData(mp3, artistSet, artistToMp3Map);
     } catch (error) {
+      setError(error.message);
       console.error("Error refreshing MP3 link:", error);
     }
   };
@@ -72,47 +73,57 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="p-6 mt-10 w-full  max-w-[1050px] mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-white text-center">Artists</h2>
+    <div className="p-6 mt-10 w-full max-w-[1050px] mx-auto">
+      {loading ? (
+        <CircleLoader />
+      ) : mp3List.length === 0 ? (
+        <div className="flex justify-center">No artists found</div>
+      ) : (
+        <>
+          <h2 className="text-2xl font-bold mb-6 text-white text-center">Artists</h2>
 
-      <table className="min-w-full border border-[#333]">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 text-left text-gray-300">Artist</th>
-            <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Songs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {artists.map((artist, index) => {
-            const mp3sForArtist = artistsFetchedRef.current.get(artist) || [];
-            return (
-              <tr key={index} className="border-b border-gray-800">
-                <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artist}</td>
-                <td className="py-4 px-4">
-                  <ul>
-                    {mp3sForArtist.length === 0 && <li className="text-gray-400 italic">No songs available.</li>}
-                    {mp3sForArtist.map((mp3, idx) => (
-                      <li key={idx} className="text-gray-300 flex items-center space-x-2">
-                        <span onClick={() => setCurrentMP3(mp3)} className="underline sm:no-underline cursor-pointer">
-                          {mp3.title || `Song ${mp3.id}`}
-                        </span>
-                        {failedMP3s.has(mp3.id) && (
-                          <button
-                            onClick={() => handleRefreshSingleLink(mp3)}
-                            className="text-red-500 hover:text-red-700"
-                            title="Refresh Link">
-                            <FaSyncAlt />
-                          </button>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                </td>
+          <table className="min-w-full border border-[#333]">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 text-left text-gray-300">Artist</th>
+                <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Songs</th>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+              {artists.map((artist, index) => {
+                const mp3sForArtist = artistsFetchedRef.current.get(artist) || [];
+                return (
+                  <tr key={index} className="border-b border-gray-800">
+                    <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artist}</td>
+                    <td className="py-4 px-4">
+                      <ul>
+                        {mp3sForArtist.length === 0 && <li className="text-gray-400 italic">No songs available.</li>}
+                        {mp3sForArtist.map((mp3, idx) => (
+                          <li key={idx} className="text-gray-300 flex items-center space-x-2">
+                            <span
+                              onClick={() => setCurrentMP3(mp3)}
+                              className="underline sm:no-underline cursor-pointer">
+                              {mp3.title || `Song ${mp3.id}`}
+                            </span>
+                            {failedMP3s.has(mp3.id) && (
+                              <button
+                                onClick={() => handleRefreshSingleLink(mp3)}
+                                className="text-red-500 hover:text-red-700"
+                                title="Refresh Link">
+                                <FaSyncAlt />
+                              </button>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </>
+      )}
 
       {/* Failed Links Section */}
       {failedMP3s.size > 0 && (
@@ -144,7 +155,7 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List 
         </div>
       )}
 
-      {loading && (
+      {loadingArtist && (
         <div className="flex justify-center py-4">
           <CircleLoader />
         </div>

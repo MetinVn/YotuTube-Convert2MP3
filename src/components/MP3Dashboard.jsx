@@ -51,6 +51,7 @@ const MP3Dashboard = () => {
           refreshMP3Link={handleRefreshLink}
           setCurrentMP3={setCurrentMP3}
           mp3List={mp3List}
+          loading={loading}
         />
       ),
       index: 1,
@@ -62,6 +63,7 @@ const MP3Dashboard = () => {
           loadingRefresh={loadingRefresh}
           setCurrentMP3={setCurrentMP3}
           mp3List={mp3List}
+          loading={loading}
         />
       ),
       index: 2,

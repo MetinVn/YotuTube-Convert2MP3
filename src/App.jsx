@@ -8,12 +8,13 @@ import Button from "./components/Button";
 import Input from "./components/Inputfield";
 import Footer from "./components/Footer";
 import CustomSelect from "./components/ReactSelect";
-import { MP3Context } from "./contexts/MP3Context";
 import ResultLink from "./components/ResultLink";
 import Modal from "./components/Modal";
 
+import { MP3Context } from "./contexts/MP3Context";
+
 function App() {
-  const [modal, setModal] = useState(false);
+  const [modal, setModal] = useState(true);
   const inputUrl = useRef(null);
   const [loading, setLoading] = useState(false);
   const [convertType, setConvertType] = useState("mp3");

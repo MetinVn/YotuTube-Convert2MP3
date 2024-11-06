@@ -7,11 +7,11 @@ const DynamicBreadcrumb = () => {
 
   useEffect(() => {
     const pathnames = location.pathname
-      .replace("/YotuTube-Convert2MP3/", "")
+      .replace("/YouTube-Converter/", "")
       .split("/")
       .filter((x) => x);
     const newBreadcrumbs = pathnames.map((_, index) => {
-      const routeTo = `/YotuTube-Convert2MP3/${pathnames.slice(0, index + 1).join("/")}`;
+      const routeTo = `/YouTube-Converter/${pathnames.slice(0, index + 1).join("/")}`;
       return { path: routeTo, label: pathnames[index] };
     });
     setBreadcrumbs(newBreadcrumbs);
@@ -22,7 +22,7 @@ const DynamicBreadcrumb = () => {
       <Link
         title="Home page"
         aria-label="Home page"
-        to="/YotuTube-Convert2MP3/"
+        to="/YouTube-Converter/"
         className="text-green-500 underline w-fit hover:text-green-600 duration-300 text-sm md:text-base">
         Home
       </Link>

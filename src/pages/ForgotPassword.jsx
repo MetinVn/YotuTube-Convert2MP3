@@ -16,7 +16,7 @@ const PasswordReset = () => {
       await sendPasswordResetEmail(auth, email);
       setMessage("Password reset email sent successfully! Check your inbox.");
       setTimeout(() => {
-        navigate("/YotuTube-Convert2MP3/login");
+        navigate("/YouTube-Converter/login");
       }, 2000);
     } catch (error) {
       setMessage(`Error: ${error.message}`);

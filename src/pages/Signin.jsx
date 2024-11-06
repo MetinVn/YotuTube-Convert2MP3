@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpWithEmail } from "../firebaseAuth";
 import Button from "../components/Button";
 import Input from "../components/Inputfield";
 import { getErrorMessage } from "../utils/ConvertErrorMsg";
+import { UserContext } from "../contexts/UserContext";
 
 const Signin = () => {
+  const { loadingUser, isLoggedIn } = useContext(UserContext);
   const navigate = useNavigate();
   const [displayName, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  if (!loadingUser && !isLoggedIn) {
+    navigate("/YouTube-Converter/account");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +27,7 @@ const Signin = () => {
     try {
       await signUpWithEmail(email, password, displayName);
       alert("Verification email sent! Please check your inbox.");
-      navigate("/YotuTube-Convert2MP3/login");
+      navigate("/YouTube-Converter/login");
     } catch (error) {
       const message = getErrorMessage(error.message);
       setError(message);
@@ -96,7 +102,7 @@ const Signin = () => {
         <p className="mt-6 text-center text-gray-300">
           Already have an account?{" "}
           <Link
-            to="/YotuTube-Convert2MP3/login"
+            to="/YouTube-Converter/login"
             className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
             Log in
           </Link>

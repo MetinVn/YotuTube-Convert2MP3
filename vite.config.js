@@ -3,5 +3,5 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  base: "/YotuTube-Convert2MP3/",
+  base: "/YouTube-Converter/",
 });

@@ -31,27 +31,23 @@ root.render(
           <Header />
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              <Route exact path="/YotuTube-Convert2MP3/account" element={<ProtectedRoute element={<Account />} />} />
+              <Route exact path="/YouTube-Converter/account" element={<ProtectedRoute element={<Account />} />} />
               <Route
                 exact
-                path="/YotuTube-Convert2MP3/music-list"
+                path="/YouTube-Converter/music-list"
                 element={<ProtectedRoute element={<MP3Dashboard />} />}
               />
               <Route
                 exact
-                path="/YotuTube-Convert2MP3/account/edit"
+                path="/YouTube-Converter/account/edit"
                 element={<ProtectedRoute element={<EditProfile />} />}
               />
-              <Route
-                exact
-                path="/YotuTube-Convert2MP3/bug-report"
-                element={<ProtectedRoute element={<BugReport />} />}
-              />
-              <Route exact index path="/YotuTube-Convert2MP3/" element={<App />} />
-              <Route exact path="/YotuTube-Convert2MP3/signin" element={<Signin />} />
-              <Route exact path="/YotuTube-Convert2MP3/login" element={<Login />} />
-              <Route exact path="/YotuTube-Convert2MP3/credits" element={<Credits />} />
-              <Route exact path="/YotuTube-Convert2MP3/reset-password" element={<ForgotPassword />} />
+              <Route exact path="/YouTube-Converter/bug-report" element={<ProtectedRoute element={<BugReport />} />} />
+              <Route exact index path="/YouTube-Converter/" element={<App />} />
+              <Route exact path="/YouTube-Converter/signin" element={<Signin />} />
+              <Route exact path="/YouTube-Converter/login" element={<Login />} />
+              <Route exact path="/YouTube-Converter/credits" element={<Credits />} />
+              <Route exact path="/YouTube-Converter/reset-password" element={<ForgotPassword />} />
               <Route exact path="*" element={<ErrorPage />} />
             </Routes>
           </Suspense>

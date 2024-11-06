@@ -14,7 +14,7 @@ import Modal from "./components/Modal";
 import { MP3Context } from "./contexts/MP3Context";
 
 function App() {
-  const [modal, setModal] = useState(true);
+  const [modal, setModal] = useState(false);
   const inputUrl = useRef(null);
   const [loading, setLoading] = useState(false);
   const [convertType, setConvertType] = useState("mp3");

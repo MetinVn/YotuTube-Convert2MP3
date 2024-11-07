@@ -64,6 +64,24 @@ const Profile = () => {
             </div>
           </div>
 
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row sm:space-x-4 mt-8">
+            <Button
+              aria_label="Log out"
+              type="button"
+              onClick={handleLogout}
+              children="Log out"
+              className="px-4 py-2 mb-4 sm:mb-0 sm:w-auto w-full bg-[#FF5252] text-white rounded hover:bg-[#E04848] transition duration-300"
+            />
+            <Button
+              aria_label="Edit profile"
+              type="button"
+              onClick={() => navigate("/account/edit")}
+              children="Edit profile"
+              className="px-4 py-2 sm:w-auto w-full bg-[#4CAF50] text-white rounded hover:bg-[#388E3C] transition duration-300"
+            />
+          </div>
+
           {/* MP3 List */}
           <div className="space-y-4 mt-6">
             <div className="text-lg text-gray-300 flex flex-col">
@@ -82,24 +100,6 @@ const Profile = () => {
                 ))}
               </ul>
             </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row sm:space-x-4 mt-8">
-            <Button
-              aria_label="Log out"
-              type="button"
-              onClick={handleLogout}
-              children="Log out"
-              className="px-4 py-2 mb-4 sm:mb-0 sm:w-auto w-full bg-[#FF5252] text-white rounded hover:bg-[#E04848] transition duration-300"
-            />
-            <Button
-              aria_label="Edit profile"
-              type="button"
-              onClick={() => navigate("/account/edit")}
-              children="Edit profile"
-              className="px-4 py-2 sm:w-auto w-full bg-[#4CAF50] text-white rounded hover:bg-[#388E3C] transition duration-300"
-            />
           </div>
         </div>
       </div>

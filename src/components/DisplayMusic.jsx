@@ -72,7 +72,7 @@ const DisplayMusic = ({
                   <td className="p-1 sm:p-3 text-center">
                     <button
                       onClick={() => handlePlaySong(item)}
-                      className="w-10 h-10 flex items-center justify-center bg-[#4ADA31] text-white rounded-full shadow hover:shadow-md hover:bg-[#38a623] transition-all duration-300">
+                      className="w-10 h-10 flex items-center justify-center bg-[#4ADA31] text-white rounded-md shadow hover:shadow-md hover:bg-[#38a623] transition-all duration-300">
                       <FiPlay className="text-xs sm:text-xl" />
                     </button>
                   </td>

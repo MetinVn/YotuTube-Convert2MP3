@@ -134,7 +134,7 @@ const NowPlaying = ({ mp3, onClose, toast, nextTrack }) => {
     <div className="fixed bottom-0 left-0 right-0 p-4 bg-[#333] text-white flex items-center space-x-4 shadow-lg rounded-lg mx-10 z-50">
       {/* Player Controls */}
       <button
-        className="p-2 bg-[#4ADA31] text-white rounded-full cursor-pointer hover:bg-[#38a623]"
+        className="p-2 bg-[#4ADA31] text-white rounded-md cursor-pointer hover:bg-[#38a623]"
         onClick={handlePlayPause}
         disabled={isLoading || errorMessage}>
         {isPlaying ? <FiPause className="text-xl" /> : <FiPlay className="text-xl" />}

@@ -3,7 +3,7 @@ import { parseBlob } from "music-metadata";
 import CircleLoader from "./LoadingAnimation";
 
 const DisplayArtist = ({ loadingRefresh, mp3List, refreshMP3Link, loading }) => {
-  const [artists, setArtists] = useState([]);
+  const [artists, setArtists] = useState(new Map());
   const [failedMP3s, setFailedMP3s] = useState([]);
   const fetchAttemptedRef = useRef(new Set());
 
@@ -19,10 +19,25 @@ const DisplayArtist = ({ loadingRefresh, mp3List, refreshMP3Link, loading }) => 
 
         const blob = await response.blob();
         const metadata = await parseBlob(blob);
+
+        // Ensure the artist is known, or fallback to "Unknown Artist"
         const artist = metadata.common.artist || "Unknown Artist";
+        const songTitle = mp3.title;
 
         setArtists((prevArtists) => {
-          const updatedArtists = [...prevArtists, { artist, title: mp3.title }];
+          const updatedArtists = new Map(prevArtists);
+
+          // Check if artist already exists in the Map
+          if (updatedArtists.has(artist)) {
+            // If artist exists, add the song if it's not already there
+            const existingSongs = updatedArtists.get(artist);
+            if (!existingSongs.includes(songTitle)) {
+              existingSongs.push(songTitle); // Add the song title if it's not a duplicate
+            }
+          } else {
+            // Otherwise, create a new entry for the artist with the song
+            updatedArtists.set(artist, [songTitle]);
+          }
           return updatedArtists;
         });
       } catch (error) {
@@ -67,10 +82,17 @@ const DisplayArtist = ({ loadingRefresh, mp3List, refreshMP3Link, loading }) => 
           </tr>
         </thead>
         <tbody>
-          {artists.map((artistData, index) => (
-            <tr key={index} className="border-b border-gray-800">
-              <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artistData.artist}</td>
-              <td className="py-4 px-4 text-gray-300">{artistData.title}</td>
+          {[...artists].map(([artistName, songs]) => (
+            <tr key={artistName} className="border-b border-gray-800">
+              <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artistName}</td>
+              <td className="py-4 px-4 text-gray-300">
+                {songs.map((song, index) => (
+                  <React.Fragment key={index}>
+                    {song}
+                    {index < songs.length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </td>
             </tr>
           ))}
         </tbody>

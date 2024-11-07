@@ -22,7 +22,7 @@ const DynamicBreadcrumb = () => {
       <Link
         title="Home page"
         aria-label="Home page"
-        to="/YouTube-Converter/"
+        to="/"
         className="text-green-500 underline w-fit hover:text-green-600 duration-300 text-sm md:text-base">
         Home
       </Link>

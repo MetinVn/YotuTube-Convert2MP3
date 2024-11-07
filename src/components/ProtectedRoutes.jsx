@@ -8,7 +8,7 @@ const ProtectedRoute = ({ element }) => {
 
   if (loadingUser) return <PageFallback />;
 
-  return isLoggedIn ? element : <Navigate to="/YouTube-Converter/login" />;
+  return isLoggedIn ? element : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

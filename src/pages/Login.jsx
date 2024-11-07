@@ -20,7 +20,7 @@ const Login = () => {
 
     try {
       await signInWithEmail(email, password);
-      navigate("/YouTube-Converter/account");
+      navigate("/account");
     } catch (error) {
       const message = getErrorMessage(error.message);
       console.log(error.message);
@@ -89,18 +89,14 @@ const Login = () => {
 
         <p className="mt-6 text-center text-gray-300">
           Forgot your password?{" "}
-          <Link
-            to="/YouTube-Converter/reset-password"
-            className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
+          <Link to="/reset-password" className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
             Reset it here
           </Link>
         </p>
 
         <p className="mt-6 text-center text-gray-300">
           Don't have an account?{" "}
-          <Link
-            to="/YouTube-Converter/signin"
-            className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
+          <Link to="/signin" className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
             Sign up
           </Link>
         </p>

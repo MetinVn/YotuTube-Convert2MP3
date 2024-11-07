@@ -15,7 +15,6 @@ export async function refreshMP3(youtubeID, updatedFields) {
     const mp3Ref = doc(firestore, `users/${userId}/mp3s`, youtubeID);
 
     await updateDoc(mp3Ref, updatedFields);
-    console.log(`MP3 with ID ${youtubeID} updated successfully!`);
   } catch (error) {
     console.error("Failed to update MP3:", error.message);
   }

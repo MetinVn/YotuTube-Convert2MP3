@@ -19,7 +19,7 @@ const Header = () => {
       ) : isLoggedIn ? (
         <>
           <Dashboard />
-          <Link to={"/YouTube-Converter/account"}>
+          <Link to={"/account"}>
             <Button
               aria_label="Account"
               children={"Account"}
@@ -29,7 +29,7 @@ const Header = () => {
           </Link>
         </>
       ) : (
-        <Link to={"/YouTube-Converter/signin"}>
+        <Link to={"/signin"}>
           <Button
             aria_label="Sign in"
             children="Sign in"

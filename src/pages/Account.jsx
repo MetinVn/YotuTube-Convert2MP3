@@ -31,7 +31,7 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await signOutUser();
-      navigate("/YouTube-Converter/");
+      navigate("/");
     } catch (error) {
       console.error("Failed to log out. Please try again.", error);
     }
@@ -96,7 +96,7 @@ const Profile = () => {
             <Button
               aria_label="Edit profile"
               type="button"
-              onClick={() => navigate("/YouTube-Converter/account/edit")}
+              onClick={() => navigate("/account/edit")}
               children="Edit profile"
               className="px-4 py-2 sm:w-auto w-full bg-[#4CAF50] text-white rounded hover:bg-[#388E3C] transition duration-300"
             />

@@ -102,7 +102,7 @@ const DisplayAlbum = ({ refreshMP3Link, loadingRefresh, setCurrentMP3, mp3List, 
                           <li key={idx} className="text-gray-300 flex items-center space-x-2">
                             <span
                               onClick={() => setCurrentMP3(mp3)}
-                              className=" underline sm:no-underline cursor-pointer rounded">
+                              className="hover underline sm:no-underline cursor-pointer rounded">
                               {mp3.title || `Song ${mp3.id}`}
                             </span>
                           </li>

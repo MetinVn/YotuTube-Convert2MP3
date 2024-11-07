@@ -8,7 +8,7 @@ const Modal = ({ isOpen = false, onClose = () => {}, paragraph = "", description
   const navigate = useNavigate(null);
 
   const handleNavigate = () => {
-    navigate("/YouTube-Converter/signin");
+    navigate("/signin");
   };
 
   useEffect(() => {

@@ -15,9 +15,11 @@ const Signin = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (!loadingUser && !isLoggedIn) {
-    navigate("/YouTube-Converter/account");
-  }
+  useEffect(() => {
+    if (!loadingUser && !isLoggedIn) {
+      navigate("/account");
+    }
+  }, [loadingUser, isLoggedIn]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,7 @@ const Signin = () => {
     try {
       await signUpWithEmail(email, password, displayName);
       alert("Verification email sent! Please check your inbox.");
-      navigate("/YouTube-Converter/login");
+      navigate("/login");
     } catch (error) {
       const message = getErrorMessage(error.message);
       setError(message);
@@ -101,9 +103,7 @@ const Signin = () => {
 
         <p className="mt-6 text-center text-gray-300">
           Already have an account?{" "}
-          <Link
-            to="/YouTube-Converter/login"
-            className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
+          <Link to="/login" className="text-[#4CAF50] hover:text-[#388E3C] underline transition duration-200">
             Log in
           </Link>
         </p>

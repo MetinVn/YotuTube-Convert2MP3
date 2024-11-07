@@ -31,12 +31,12 @@ const Dashboard = () => {
     {
       name: "Main Menu",
       description: "Convert Youtube links",
-      linkTo: "/YouTube-Converter/",
+      linkTo: "/",
     },
     {
       name: "Check out MP3 list",
       description: "Listen to your converted music",
-      linkTo: "/YouTube-Converter/music-list",
+      linkTo: "/music-list",
     },
   ];
 
@@ -44,7 +44,7 @@ const Dashboard = () => {
     {
       name: "Report a Bug",
       description: "Help us improve by reporting any issues.",
-      linkTo: "/YouTube-Converter/bug-report",
+      linkTo: "/bug-report",
     },
   ];
 

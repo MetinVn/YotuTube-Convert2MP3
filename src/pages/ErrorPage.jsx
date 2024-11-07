@@ -12,7 +12,7 @@ const ErrorPage = () => {
       <p className="text-lg text-gray-200 mb-6">This is not the page you're looking for.</p>
       <Link
         aria_label="Go Home"
-        to="/YouTube-Converter/"
+        to="/"
         className="rounded-lg bg-[#4CAF50] text-white px-6 py-2 hover:bg-[#388E3C] transition-colors">
         Go to Homepage
       </Link>

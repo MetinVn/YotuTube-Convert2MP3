@@ -47,7 +47,7 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/YouTube-Converter/credits" className="text-blue-400 hover:underline" title="Credits">
+                <Link to="/credits" className="text-blue-400 hover:underline" title="Credits">
                   Credits
                 </Link>
               </li>

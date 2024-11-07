@@ -56,7 +56,7 @@ const EditProfile = () => {
   };
 
   const handleCancel = () => {
-    navigate("/YouTube-Converter/account");
+    navigate("/account");
   };
 
   const isSaveButtonDisabled = !displayName || displayName === initialDisplayName;
@@ -143,7 +143,7 @@ const EditProfile = () => {
               type="submit"
               className="px-4 py-3 bg-[#4CAF50] text-white rounded-md hover:bg-[#388E3C] transition-colors duration-300"
             />
-            <Link to="/YouTube-Converter/reset-password" title="Reset password">
+            <Link to="/reset-password" title="Reset password">
               <span className="hover:underline text-sm text-gray-300">Forgot password?</span>
             </Link>
           </div>

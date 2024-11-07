@@ -31,23 +31,15 @@ root.render(
           <Header />
           <Suspense fallback={<PageFallback />}>
             <Routes>
-              <Route exact path="/YouTube-Converter/account" element={<ProtectedRoute element={<Account />} />} />
-              <Route
-                exact
-                path="/YouTube-Converter/music-list"
-                element={<ProtectedRoute element={<MP3Dashboard />} />}
-              />
-              <Route
-                exact
-                path="/YouTube-Converter/account/edit"
-                element={<ProtectedRoute element={<EditProfile />} />}
-              />
-              <Route exact path="/YouTube-Converter/bug-report" element={<ProtectedRoute element={<BugReport />} />} />
-              <Route exact index path="/YouTube-Converter/" element={<App />} />
-              <Route exact path="/YouTube-Converter/signin" element={<Signin />} />
-              <Route exact path="/YouTube-Converter/login" element={<Login />} />
-              <Route exact path="/YouTube-Converter/credits" element={<Credits />} />
-              <Route exact path="/YouTube-Converter/reset-password" element={<ForgotPassword />} />
+              <Route exact path="/account" element={<ProtectedRoute element={<Account />} />} />
+              <Route exact path="/music-list" element={<ProtectedRoute element={<MP3Dashboard />} />} />
+              <Route exact path="/account/edit" element={<ProtectedRoute element={<EditProfile />} />} />
+              <Route exact path="/bug-report" element={<ProtectedRoute element={<BugReport />} />} />
+              <Route exact index path="/" element={<App />} />
+              <Route exact path="/signin" element={<Signin />} />
+              <Route exact path="/login" element={<Login />} />
+              <Route exact path="/credits" element={<Credits />} />
+              <Route exact path="/reset-password" element={<ForgotPassword />} />
               <Route exact path="*" element={<ErrorPage />} />
             </Routes>
           </Suspense>

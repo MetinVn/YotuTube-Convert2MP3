@@ -47,11 +47,10 @@ const MP3Dashboard = () => {
     Artists: {
       component: () => (
         <DisplayArtist
+          loading={loading}
           loadingRefresh={loadingRefresh}
           refreshMP3Link={handleRefreshLink}
-          setCurrentMP3={setCurrentMP3}
           mp3List={mp3List}
-          loading={loading}
         />
       ),
       index: 1,
@@ -61,7 +60,6 @@ const MP3Dashboard = () => {
         <DisplayAlbum
           refreshMP3Link={handleRefreshLink}
           loadingRefresh={loadingRefresh}
-          setCurrentMP3={setCurrentMP3}
           mp3List={mp3List}
           loading={loading}
         />

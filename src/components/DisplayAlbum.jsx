@@ -3,152 +3,105 @@ import { parseBlob } from "music-metadata";
 import CircleLoader from "./LoadingAnimation";
 import { FaSyncAlt } from "react-icons/fa";
 
-const DisplayAlbum = ({ refreshMP3Link, loadingRefresh, setCurrentMP3, mp3List, loading }) => {
+const DisplayAlbum = ({ refreshMP3Link, loadingRefresh, mp3List, loading }) => {
   const [albums, setAlbums] = useState([]);
-  const [error, setError] = useState(null);
-  const [loadingAlbums, setLoadingAlbums] = useState(null);
+  const [failedMP3s, setFailedMP3s] = useState([]);
+  const fetchAttemptedRef = useRef(new Set());
 
-  const [failedMP3s, setFailedMP3s] = useState(new Map());
-  const albumsFetchedRef = useRef(new Map());
+  const fetchSongData = async (mp3) => {
+    if (fetchAttemptedRef.current.has(mp3.id)) return;
 
-  const fetchSongData = async (mp3, albumSet, albumToMp3Map) => {
-    try {
-      const response = await fetch(mp3.url);
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+    if (!loadingRefresh) {
+      try {
+        fetchAttemptedRef.current.add(mp3.id);
 
-      const blob = await response.blob();
-      const metadata = await parseBlob(blob);
+        const response = await fetch(mp3.url);
+        if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
 
-      const album = metadata.common.album || "Unknown Album";
+        const blob = await response.blob();
+        const metadata = await parseBlob(blob);
+        const album = metadata.common.album || "Unknown Album";
 
-      if (!albumToMp3Map.has(album)) {
-        albumToMp3Map.set(album, []);
+        setAlbums((prevAlbums) => {
+          const updatedAlbums = [...prevAlbums, { album, title: mp3.title }];
+          return updatedAlbums;
+        });
+      } catch (error) {
+        console.error(`Error with "${mp3.title}": ${error.message}`);
+        setFailedMP3s((prevFailed) => {
+          if (!prevFailed.some((failed) => failed.id === mp3.id)) {
+            return [...prevFailed, mp3];
+          }
+          return prevFailed;
+        });
       }
-
-      albumToMp3Map.get(album).push(mp3);
-      albumSet.add(album);
-
-      setAlbums([...albumSet]);
-      albumsFetchedRef.current = new Map(albumToMp3Map);
-
-      setFailedMP3s((prevFailed) => {
-        const updatedFailed = new Map(prevFailed);
-        updatedFailed.delete(mp3.id);
-        return updatedFailed;
-      });
-    } catch (error) {
-      console.error(error);
-      setFailedMP3s((prevFailed) => new Map(prevFailed).set(mp3.id, mp3));
     }
   };
 
   useEffect(() => {
-    const fetchAlbums = async () => {
-      setLoadingAlbums(true);
-      const albumSet = new Set();
-      const albumToMp3Map = new Map();
+    mp3List.forEach((mp3) => fetchSongData(mp3));
+  }, [mp3List]);
 
-      await Promise.all(mp3List.map((mp3) => fetchSongData(mp3, albumSet, albumToMp3Map)));
-      setLoadingAlbums(false);
-    };
-    if (mp3List.length > 0) fetchAlbums();
-  }, [mp3List, loadingRefresh]);
-
-  const handleRefreshSingleLink = async (mp3) => {
+  const handleSingleRefresh = async (mp3) => {
+    setFailedMP3s((prev) => prev.filter((item) => item.id !== mp3.id));
     try {
-      await refreshMP3Link(mp3);
-      while (loadingRefresh) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      const resp = await refreshMP3Link(mp3);
+      if (resp) {
+        await fetchSongData(mp3);
       }
-
-      const albumSet = new Set(albums);
-      const albumToMp3Map = new Map(albumsFetchedRef.current);
-      await fetchSongData(mp3, albumSet, albumToMp3Map);
     } catch (error) {
-      setError(error.message);
       console.error("Error refreshing MP3 link:", error);
+      setFailedMP3s((prev) => [...prev, mp3]);
     }
   };
 
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (loading) return <CircleLoader />;
 
   return (
     <div className="p-6 mt-10 w-full max-w-[1050px] mx-auto">
-      {loading ? (
-        <CircleLoader />
-      ) : mp3List.length === 0 ? (
-        <div className="flex justify-center text-center">No albums found</div>
-      ) : (
-        <>
-          <h2 className="text-2xl font-bold mb-6 text-white text-center">Albums</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white text-center">Albums</h2>
+      <table className="min-w-full border border-[#333]">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 text-left text-gray-300">Album</th>
+            <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Song Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          {albums.map((albumData, index) => (
+            <tr key={index} className="border-b border-gray-800">
+              <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{albumData.album}</td>
+              <td className="py-4 px-4 text-gray-300">{albumData.title}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-          <table className="min-w-full border border-[#333] mb-6">
+      {failedMP3s.length > 0 && (
+        <div className="mt-6">
+          <h3 className="text-xl font-bold text-white">Failed to load</h3>
+          <table className="min-w-full border border-[#333] mt-2">
             <thead>
               <tr>
-                <th className="py-2 px-4 text-left text-gray-300">Album</th>
-                <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Songs</th>
+                <th className="py-2 px-4 text-left text-gray-300">Song Title</th>
+                <th className="py-2 px-4 text-left text-gray-300">Status</th>
+                <th className="py-2 px-4 text-left text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {albums.map((album, index) => {
-                const mp3sForAlbum = albumsFetchedRef.current.get(album) || [];
-                return (
-                  <tr key={index} className="border-b border-gray-700">
-                    <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{album}</td>
-                    <td className="py-4 px-4">
-                      <ul>
-                        {mp3sForAlbum.length === 0 && <li className="text-gray-500 italic">No songs available.</li>}
-                        {mp3sForAlbum.map((mp3, idx) => (
-                          <li key={idx} className="text-gray-300 flex items-center space-x-2">
-                            <span
-                              onClick={() => setCurrentMP3(mp3)}
-                              className="hover:opacity-75 underline sm:no-underline cursor-pointer rounded">
-                              {mp3.title || `Song ${mp3.id}`}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                );
-              })}
+              {failedMP3s.map((mp3) => (
+                <tr key={mp3.id} className="border-b border-gray-700">
+                  <td className="py-4 px-4 text-gray-300">{mp3.title}</td>
+                  <td className="py-4 px-4 text-red-500">Failed to fetch</td>
+                  <td
+                    onClick={() => handleSingleRefresh(mp3)}
+                    className="py-4 px-4 cursor-pointer text-red-500 hover:opacity-70">
+                    <FaSyncAlt />
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
-
-          {failedMP3s.size > 0 && (
-            <>
-              <h3 className="text-xl font-bold mb-4 text-white text-center">Failed Links</h3>
-              <table className="min-w-full border border-[#333]">
-                <thead>
-                  <tr>
-                    <th className="py-2 px-4 text-left text-gray-300">Song</th>
-                    <th className="py-2 px-4 text-left text-gray-300">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Array.from(failedMP3s.values()).map((mp3, index) => (
-                    <tr key={index} className="border-b border-gray-700">
-                      <td className="py-4 px-4 text-gray-300">{mp3.title || `Song ${mp3.id}`}</td>
-                      <td className="py-4 px-4">
-                        <button
-                          onClick={() => handleRefreshSingleLink(mp3)}
-                          className="text-red-500 hover:text-red-700"
-                          title="Refresh Link">
-                          <FaSyncAlt />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </>
-          )}
-        </>
-      )}
-
-      {loadingAlbums && (
-        <div className="flex justify-center py-4">
-          <CircleLoader />
         </div>
       )}
     </div>

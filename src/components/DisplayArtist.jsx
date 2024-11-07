@@ -1,163 +1,106 @@
 import React, { useEffect, useState, useRef } from "react";
 import { parseBlob } from "music-metadata";
 import CircleLoader from "./LoadingAnimation";
-import { FaSyncAlt } from "react-icons/fa";
 
-const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List, loading }) => {
+const DisplayArtist = ({ loadingRefresh, mp3List, refreshMP3Link, loading }) => {
   const [artists, setArtists] = useState([]);
-  const [error, setError] = useState(null);
-  const [failedMP3s, setFailedMP3s] = useState(new Map());
-  const [loadingArtist, setLoadingArtist] = useState(false);
-  const artistsFetchedRef = useRef(new Map());
+  const [failedMP3s, setFailedMP3s] = useState([]);
+  const fetchAttemptedRef = useRef(new Set());
 
-  const fetchSongData = async (mp3, artistSet, artistToMp3Map) => {
-    try {
-      const response = await fetch(mp3.url);
-      if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
+  const fetchSongData = async (mp3) => {
+    if (fetchAttemptedRef.current.has(mp3.id)) return;
 
-      const blob = await response.blob();
-      const metadata = await parseBlob(blob);
+    if (!loadingRefresh) {
+      try {
+        fetchAttemptedRef.current.add(mp3.id);
 
-      const artist = metadata.common.artist || "Unknown Artist";
+        const response = await fetch(mp3.url);
+        if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
 
-      if (!artistToMp3Map.has(artist)) {
-        artistToMp3Map.set(artist, []);
+        const blob = await response.blob();
+        const metadata = await parseBlob(blob);
+        const artist = metadata.common.artist || "Unknown Artist";
+
+        setArtists((prevArtists) => {
+          const updatedArtists = [...prevArtists, { artist, title: mp3.title }];
+          return updatedArtists;
+        });
+      } catch (error) {
+        console.error(`Error with "${mp3.title}": ${error.message}`);
+        setFailedMP3s((prevFailed) => {
+          if (!prevFailed.some((failed) => failed.id === mp3.id)) {
+            return [...prevFailed, mp3];
+          }
+          return prevFailed;
+        });
       }
-
-      artistToMp3Map.get(artist).push(mp3);
-      artistSet.add(artist);
-
-      setArtists([...artistSet]);
-      artistsFetchedRef.current = new Map(artistToMp3Map);
-
-      setFailedMP3s((prevFailed) => {
-        const updatedFailed = new Map(prevFailed);
-        updatedFailed.delete(mp3.id);
-        return updatedFailed;
-      });
-    } catch (error) {
-      console.error(error);
-      setFailedMP3s((prevFailed) => new Map(prevFailed).set(mp3.id, mp3));
     }
   };
 
   useEffect(() => {
-    const fetchArtists = async () => {
-      setLoadingArtist(true);
-      const artistSet = new Set();
-      const artistToMp3Map = new Map();
+    mp3List.forEach((mp3) => fetchSongData(mp3));
+  }, [mp3List]);
 
-      await Promise.all(mp3List.map((mp3) => fetchSongData(mp3, artistSet, artistToMp3Map)));
-      setLoadingArtist(false);
-    };
-
-    if (mp3List.length > 0) fetchArtists();
-  }, [mp3List, loadingRefresh]);
-
-  const handleRefreshSingleLink = async (mp3) => {
+  const handleSingleRefresh = async (mp3) => {
+    setFailedMP3s((prev) => prev.filter((item) => item.id !== mp3.id));
     try {
-      await refreshMP3Link(mp3);
-      while (loadingRefresh) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      const resp = await refreshMP3Link(mp3);
+      if (resp) {
+        await fetchSongData(mp3);
       }
-
-      const artistSet = new Set(artists);
-      const artistToMp3Map = new Map(artistsFetchedRef.current);
-      await fetchSongData(mp3, artistSet, artistToMp3Map);
     } catch (error) {
-      setError(error.message);
       console.error("Error refreshing MP3 link:", error);
+      setFailedMP3s((prev) => [...prev, mp3]);
     }
   };
 
-  if (error) return <div className="text-red-500">{error}</div>;
+  if (loading) return <CircleLoader />;
 
   return (
     <div className="p-6 mt-10 w-full max-w-[1050px] mx-auto">
-      {loading ? (
-        <CircleLoader />
-      ) : mp3List.length === 0 ? (
-        <div className="flex justify-center">No artists found</div>
-      ) : (
-        <>
-          <h2 className="text-2xl font-bold mb-6 text-white text-center">Artists</h2>
+      <h2 className="text-2xl font-bold mb-6 text-white text-center">Artists</h2>
+      <table className="min-w-full border border-[#333]">
+        <thead>
+          <tr>
+            <th className="py-2 px-4 text-left text-gray-300">Artist</th>
+            <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Song Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          {artists.map((artistData, index) => (
+            <tr key={index} className="border-b border-gray-800">
+              <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artistData.artist}</td>
+              <td className="py-4 px-4 text-gray-300">{artistData.title}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-          <table className="min-w-full border border-[#333]">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 text-left text-gray-300">Artist</th>
-                <th className="py-2 px-4 text-left text-[#1A1A1A] bg-[#4ADA31]">Songs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {artists.map((artist, index) => {
-                const mp3sForArtist = artistsFetchedRef.current.get(artist) || [];
-                return (
-                  <tr key={index} className="border-b border-gray-800">
-                    <td className="py-4 px-4 text-[#1A1A1A] bg-[#4ADA31] font-bold">{artist}</td>
-                    <td className="py-4 px-4">
-                      <ul>
-                        {mp3sForArtist.length === 0 && <li className="text-gray-400 italic">No songs available.</li>}
-                        {mp3sForArtist.map((mp3, idx) => (
-                          <li key={idx} className="text-gray-300 flex items-center space-x-2">
-                            <span
-                              onClick={() => setCurrentMP3(mp3)}
-                              className="hover:opacity-75 underline sm:no-underline cursor-pointer">
-                              {mp3.title || `Song ${mp3.id}`}
-                            </span>
-                            {failedMP3s.has(mp3.id) && (
-                              <button
-                                onClick={() => handleRefreshSingleLink(mp3)}
-                                className="text-red-500 hover:text-red-700"
-                                title="Refresh Link">
-                                <FaSyncAlt />
-                              </button>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {/* Failed Links Section */}
-      {failedMP3s.size > 0 && (
+      {failedMP3s.length > 0 && (
         <div className="mt-6">
-          <h3 className="text-xl font-bold text-white">Failed Links</h3>
+          <h3 className="text-xl font-bold text-white">Failed to load</h3>
           <table className="min-w-full border border-[#333] mt-2">
             <thead>
               <tr>
                 <th className="py-2 px-4 text-left text-gray-300">Song Title</th>
-                <th className="py-2 px-4 text-left text-gray-300">Action</th>
+                <th className="py-2 px-4 text-left text-gray-300">Status</th>
+                <th className="py-2 px-4 text-left text-gray-300">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {Array.from(failedMP3s.values()).map((mp3, idx) => (
-                <tr key={idx} className="border-b border-gray-700">
-                  <td className="py-4 px-4 text-gray-300">{mp3.title || `Song ${mp3.id}`}</td>
-                  <td className="py-4 px-4">
-                    <button
-                      onClick={() => handleRefreshSingleLink(mp3)}
-                      className="text-red-500 hover:text-red-700"
-                      title="Refresh Link">
-                      <FaSyncAlt />
-                    </button>
+              {failedMP3s.map((mp3) => (
+                <tr key={mp3.id} className="border-b border-gray-700">
+                  <td className="py-4 px-4 text-gray-300">{mp3.title}</td>
+                  <td className="py-4 px-4 text-red-500">Failed to fetch</td>
+                  <td
+                    onClick={() => handleSingleRefresh(mp3)}
+                    className="py-4 px-4 cursor-pointer text-red-500 hover:opacity-70">
+                    Refresh
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      )}
-
-      {loadingArtist && (
-        <div className="flex justify-center py-4">
-          <CircleLoader />
         </div>
       )}
     </div>

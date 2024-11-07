@@ -11,7 +11,6 @@ export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, file
       },
     });
 
-    // Check for specific statuses indicating validity or refresh need
     if (response.status === 206 || response.status === 200) {
       toast.info(`Link is fresh and valid`);
       return true;
@@ -21,7 +20,6 @@ export const refreshMP3Link = async (itemUrl, youtubeID, setMp3List, toast, file
       return false;
     }
 
-    // Handle other unexpected statuses
     toast.error("Unexpected status encountered. Link might need refresh.");
     await refreshLink(toast, youtubeID, setMp3List, authUser, loadingUser);
     return false;

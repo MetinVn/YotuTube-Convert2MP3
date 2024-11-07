@@ -102,7 +102,7 @@ const DisplayArtist = ({ loadingRefresh, refreshMP3Link, setCurrentMP3, mp3List,
                           <li key={idx} className="text-gray-300 flex items-center space-x-2">
                             <span
                               onClick={() => setCurrentMP3(mp3)}
-                              className="underline sm:no-underline cursor-pointer">
+                              className="hover:opacity-75 underline sm:no-underline cursor-pointer">
                               {mp3.title || `Song ${mp3.id}`}
                             </span>
                             {failedMP3s.has(mp3.id) && (

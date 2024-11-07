@@ -100,7 +100,9 @@ const DisplayAlbum = ({ refreshMP3Link, loadingRefresh, setCurrentMP3, mp3List, 
                         {mp3sForAlbum.length === 0 && <li className="text-gray-500 italic">No songs available.</li>}
                         {mp3sForAlbum.map((mp3, idx) => (
                           <li key={idx} className="text-gray-300 flex items-center space-x-2">
-                            <span className=" underline sm:no-underline cursor-pointer rounded">
+                            <span
+                              onClick={() => setCurrentMP3(mp3)}
+                              className=" underline sm:no-underline cursor-pointer rounded">
                               {mp3.title || `Song ${mp3.id}`}
                             </span>
                           </li>

@@ -2,7 +2,7 @@ import { UserProvider } from "./contexts/UserContext.jsx";
 import { MP3Provider } from "./contexts/MP3Context.jsx";
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Route, HashRouter as Router, Routes } from "react-router-dom";
 import App from "./App.jsx";
 import "./index.css";
 

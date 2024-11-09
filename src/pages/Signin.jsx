@@ -16,7 +16,7 @@ const Signin = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!loadingUser && !isLoggedIn) {
+    if (!loadingUser && isLoggedIn) {
       navigate("/account");
     }
   }, [loadingUser, isLoggedIn]);

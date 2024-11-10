@@ -70,6 +70,7 @@ const DisplayArtist = ({ loadingRefresh, mp3List, refreshMP3Link, loading }) => 
   };
 
   if (loading) return <CircleLoader />;
+  if (mp3List.length === 0) return <div className="text-center py-20">No artist found.</div>;
 
   return (
     <div className="p-6 mt-10 w-full max-w-[1050px] mx-auto">
